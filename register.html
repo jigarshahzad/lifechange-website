@@ -1,0 +1,993 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>LifeChangeEasy.io | Registration</title>
+
+  <!-- ✅ Use Ethers.js instead of web3.js -->
+  <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
+
+
+<style>
+body {
+  background-color: #000;
+  color: #fff;
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+}
+.top-bar {
+  background-color: #00cc00; /* Brighter green */
+  padding: 1rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.top-bar h1 {
+  margin: 0;
+  font-size: 1.5rem;
+  color: #000; /* Now the text is black */
+}
+.connect-btn {
+  background-color: #007bff;
+  color: #fff;
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 5px;
+  font-weight: bold;
+  cursor: pointer;
+}
+.main-content {
+  max-width: 600px;
+  margin: 2rem auto;
+  background-color: #1a1a1a;
+  padding: 2rem;
+  border-radius: 10px;
+}
+.main-content h2 {
+  text-align: center;
+  margin-bottom: 2rem;
+  color: #0f0;
+}
+.id-box {
+  background-color: #000;
+  border: 4px solid; border-image: linear-gradient(to right, #00ffcc, #ff00ff, #ffff00, #00ffcc) 1;
+  border-radius: 8px;
+  padding: 0.5rem 1rem;
+  margin-bottom: 1.5rem;
+  color: #fff;
+  font-weight: bold;
+}
+.status-line {
+  padding: 1rem;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+  font-weight: bold;
+  text-align: center;
+}
+.status-line.red {
+  background-color: #330000;
+  color: #ff4d4d;
+}
+.status-line.green {
+  background-color: black; border: 2px solid; border-image: linear-gradient(to right, #00ffcc, #ff00ff, #ffff00, #00ffcc) 1;
+  color: #00ff00;
+}
+.amount-note {
+  text-align: center;
+  margin-top: 1.5rem;
+  font-weight: bold;
+  color: #ffc107;
+}
+.amount-note span {
+  color: #0f0;
+}
+.register-btn {
+  width: 100%;
+  padding: 1rem;
+  margin-top: 2rem;
+  font-weight: bold;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+}
+.register-btn.disabled {
+  background-color: #555;
+  color: #aaa;
+  cursor: not-allowed;
+}
+.register-btn.active {
+  background-color: #0f0;
+  color: #000;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+</style>
+<style>
+.spinner {
+  border: 4px solid #f3f3f3;
+  border-top: 4px solid #00ff00;
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  animation: spin 1s linear infinite;
+  display: inline-block;
+  margin-left: 10px;
+}
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+</style>
+<style>
+    @keyframes flip {
+      0%   { transform: rotateY(0deg); }
+      50%  { transform: rotateY(180deg); }
+      100% { transform: rotateY(360deg); }
+    }
+    </style><style>
+    @keyframes flip {
+      0%   { transform: rotateY(0deg); }
+      50%  { transform: rotateY(180deg); }
+      100% { transform: rotateY(360deg); }
+    }
+    </style>
+<style>
+@keyframes floatIn {
+  0% {
+    transform: translateY(0) scale(1);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(200px) scale(0.3);
+    opacity: 0;
+  }
+}
+.coin {
+  position: absolute;
+  width: 24px;
+  height: 24px;
+  background-color: gold;
+  color: black;
+  font-weight: bold;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: floatIn 4s linear infinite;
+  pointer-events: none;
+}
+#coin-container {
+  position: relative;
+  width: 140px;
+  height: 140px;
+  margin: auto;
+}
+</style>
+<style>
+@keyframes floatIn {
+  0% {
+    transform: translate(0, 0) scale(1);
+    opacity: 1;
+  }
+  100% {
+    transform: translate(var(--tx), var(--ty)) scale(0.2);
+    opacity: 0;
+  }
+}
+.coin {
+  position: absolute;
+  width: 24px;
+  height: 24px;
+  background-color: gold;
+  color: black;
+  font-weight: bold;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: floatIn 3.5s ease-in forwards;
+  pointer-events: none;
+  z-index: 2;
+}
+#coin-container {
+  position: relative;
+  width: 140px;
+  height: 140px;
+  margin: auto;
+}
+</style>
+<style>
+@keyframes floatIn {
+  0% {
+    transform: translate(0, 0) scale(1);
+    opacity: 1;
+  }
+  100% {
+    transform: translate(var(--tx), var(--ty)) scale(0.2);
+    opacity: 0;
+  }
+}
+.coin {
+  position: fixed;
+  width: 24px;
+  height: 24px;
+  background-color: gold;
+  color: black;
+  font-weight: bold;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: floatIn 3.5s ease-in forwards;
+  pointer-events: none;
+  z-index: 999;
+}
+#coin-container {
+  position: relative;
+  width: 140px;
+  height: 140px;
+  margin: auto;
+  z-index: 10;
+}
+</style>
+<style>
+ }  
+  
+    #uplineBox {  
+      margin: 30px 0;  
+      text-align: center;  
+    }  
+  
+    #uplineBox .label {  
+      color: #ccc;  
+      font-size: 1rem;  
+      margin-bottom: 8px;  
+    }  
+  
+    #referralInfo {  
+      display: inline-block;  
+      padding: 15px 30px;  
+      background: #111;  
+      border: 2px solid #00ff88;  
+      border-radius: 12px;  
+      font-size: 1.2rem;  
+      font-weight: bold;  
+      color: #00ff88;  
+      box-shadow: 0 0 15px #00ff88;  
+    }  
+    </style>
+<style>
+@keyframes slidebg {
+  0% { background-position: 0% 50%; }
+  100% { background-position: 100% 50%; }
+}
+</style><style>
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+</style></head>
+<body>
+<div class="top-bar">
+<h1 style="font-size: 20px; font-weight: bold; margin: 0; background: linear-gradient(to right, #ff0000, #00ffff, #0000ff); -webkit-background-clip: text; color: transparent;">LifeChangeEasy.io</h1>
+<button class="connect-btn" onclick="connectWallet()" style="position: absolute; top: 10px; right: 5px; z-index: 999;border-radius: 18px; padding: 6px 16px; font-size: 14px; font-weight: 600; cursor: pointer; border: 3px solid transparent; background-image: linear-gradient(#007bff, #007bff), linear-gradient(to right, #00ffcc, #ff00ff, #ffff00, #00ffcc); background-origin: border-box; background-clip: padding-box, border-box; color: white; box-shadow: 0 0 4px #00ffcc;">Connect Wallet</button>
+</div>
+<div class="main-content">
+<h2>Registration Process - LifeChangeEasy.io</h2>
+<!-- Upline Referral ID Display -->  
+    <div id="uplineBox">  
+      <div class="label">Upline ID</div>  
+      <div id="referralInfo">Checking...</div>  
+    </div>
+</div>
+<div class="status-line red">Wallet Not Detected</div>
+<div class="status-line red">Network: Not Connected</div>
+<div class="status-line red">Check Balance: 0.002166 BNB</div>
+<div class="status-line red">Approvement Complete: Pending</div>
+<div class="amount-note"><span>Minimum Required Balance: $0.002166 BNB must be available in your Trust Wallet to register successfully.</span></div>
+<button class="register-btn disabled disabled" disabled="true" id="registerBtn">Approvement Process</button>
+<button class="register-btn disabled" id="approveBtn" onclick="handleApproveBNB()">Register Now</button><div id="approveLoader" style="display:none; width: 28px; height: 28px; border: 4px solid #f3f3f3; border-top: 4px solid gold; border-radius: 50%; animation: spin 1s linear infinite; margin-left: 12px;"></div>
+<div id="finalLogo" style="display:none; text-align:center; margin-top:40px;"><div id="coin-container" style="width: 140px; height: 140px; perspective: 1000px; margin-top: 60px;">
+<div style="width: 100%; height: 100%; position: relative; transform-style: preserve-3d; animation: flip 11s infinite; transition: transform 1s;">
+<div style="position: absolute; width: 100%; height: 100%; backface-visibility: hidden; border-radius: 50%; background: black; display: flex; align-items: center; justify-content: center;">
+<img alt="Binance Logo" src="https://upload.wikimedia.org/wikipedia/commons/5/57/Binance_Logo.png" style="width: 80%; height: 80%; object-fit: contain;"/>
+</div>
+<div style="position: absolute; width: 100%; height: 100%; backface-visibility: hidden; border-radius: 50%; background: black; display: flex; align-items: center; justify-content: center; transform: rotateY(180deg);">
+<img alt="USDT Token DP" src="https://s2.coinmarketcap.com/static/img/coins/64x64/825.png" style="width: 80%; height: 80%; object-fit: contain; border-radius: 50%; background: black; padding: 6px;"/>
+</div>
+</div>
+</div></div>
+</div>
+<div id="errorBox" style="text-align:center; margin-top:20px; font-weight:bold;"></div>
+  
+<script type="module">
+  import { ethers } from "https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.esm.min.js";
+
+  // ✅ Smart Contract Info
+  const contractAddress = "0x3B52a5A3A90a5f14Db481809844A0cC520195521";
+  const abi = [
+    {
+      "inputs": [
+        { "internalType": "uint256", "name": "_uplineId", "type": "uint256" },
+        { "internalType": "string", "name": "dp", "type": "string" },
+        { "internalType": "string", "name": "name", "type": "string" },
+        { "internalType": "uint256[]", "name": "upperUplines", "type": "uint256[]" }
+      ],
+      "name": "registerUser",
+      "outputs": [],
+      "stateMutability": "payable",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "registrationFee",
+      "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [{ "internalType": "address", "name": "user", "type": "address" }],
+      "name": "getUserDashboardInfo",
+      "outputs": [
+        { "internalType": "uint256", "name": "", "type": "uint256" },
+        { "internalType": "address", "name": "", "type": "address" },
+        { "internalType": "uint256", "name": "", "type": "uint256" },
+        { "internalType": "uint256", "name": "", "type": "uint256" },
+        { "internalType": "string", "name": "", "type": "string" },
+        { "internalType": "string", "name": "", "type": "string" }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
+      "name": "idToAddress",
+      "outputs": [{ "internalType": "address", "name": "", "type": "address" }],
+      "stateMutability": "view",
+      "type": "function"
+    }
+  ];
+
+  let provider, signer, contract, userWallet;
+  let uplineId = 1;
+
+  // ✅ Get referral ID from ?ref=5 or /ref/5
+  function getReferralId() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const queryRef = parseInt(urlParams.get("ref"));
+    if (!isNaN(queryRef) && queryRef > 0) return queryRef;
+
+    const pathParts = window.location.pathname.split("/");
+    const refIndex = pathParts.indexOf("ref");
+    const pathRef = refIndex !== -1 ? parseInt(pathParts[refIndex + 1]) : null;
+    if (!isNaN(pathRef) && pathRef > 0) return pathRef;
+
+    return 1;
+  }
+
+  // ✅ Wallet & Contract Setup
+  window.addEventListener("load", async () => {
+    try {
+      uplineId = getReferralId();
+
+      const refBox = document.getElementById("referralInfo");
+      if (refBox) refBox.innerText = `Referral ID: ${uplineId}`;
+
+      provider = new ethers.providers.Web3Provider(window.ethereum);
+      signer = provider.getSigner();
+      contract = new ethers.Contract(contractAddress, abi, signer);
+
+      const accounts = await provider.send("eth_requestAccounts", []);
+      userWallet = accounts[0];
+
+      const status = document.getElementById("walletStatus");
+      if (status) status.innerText = `🔗 ${userWallet.slice(0, 6)}...${userWallet.slice(-4)}`;
+    } catch (err) {
+      console.error("❌ Wallet connection failed:", err);
+      alert("❌ Wallet connection failed. Please try again.");
+    }
+  });
+
+  // ✅ Registration Button Click
+  document.getElementById("registerBtn").addEventListener("click", async () => {
+    try {
+      const name = document.getElementById("nameInput")?.value || "User";
+      const dpInput = document.getElementById("dpInput");
+      const fee = await contract.registrationFee();
+
+      // ✅ Auto collect all indirect uplines
+      const upperUplines = [];
+      let currentUplineId = uplineId;
+
+      while (currentUplineId > 0) {
+        const uplineWallet = await contract.idToAddress(currentUplineId);
+        const uplineInfo = await contract.getUserDashboardInfo(uplineWallet);
+        const nextUplineId = parseInt(uplineInfo[2]);
+
+        if (!upperUplines.includes(currentUplineId)) {
+          upperUplines.push(currentUplineId);
+        }
+
+        if (nextUplineId === 0 || upperUplines.length > 1000) break;
+        currentUplineId = nextUplineId;
+      }
+
+      // ✅ Prepare DP if uploaded
+      let dpUrl = "";
+      const proceedRegistration = async () => {
+        const tx = await contract.registerUser(uplineId, dpUrl, name, upperUplines, { value: fee });
+        await tx.wait();
+        const info = await contract.getUserDashboardInfo(userWallet);
+        const userId = info[0].toString();
+        window.location.href = "/ref/" + userId;
+      };
+
+      if (dpInput && dpInput.files && dpInput.files[0]) {
+        const reader = new FileReader();
+        reader.onload = async () => {
+          dpUrl = reader.result;
+          await proceedRegistration();
+        };
+        reader.readAsDataURL(dpInput.files[0]);
+      } else {
+        await proceedRegistration();
+      }
+    } catch (err) {
+      console.error("❌ Registration failed:", err);
+      alert("❌ Registration failed: " + (err?.reason || err?.message || "Unknown error"));
+    }
+  });
+</script>
+<script>
+// Auto-fill referral ID from URL
+window.addEventListener('DOMContentLoaded', function () {
+  const urlParams = new URLSearchParams(window.location.search);
+  const refId = urlParams.get('ref');
+  if (refId) {
+    document.getElementById("userId").value = refId;
+  }
+});
+</script>
+<script>
+
+document.getElementById("registerBtn").addEventListener("click", function () {
+  const btn = document.getElementById("registerBtn");
+  if (!btn.classList.contains("active")) return;
+
+  const approveBtn = document.getElementById("approveBtn");
+  approveBtn.disabled = false;
+  approveBtn.classList.remove("disabled");
+  approveBtn.classList.add("active");
+});
+</script>
+<div id="approveAnimation" style="display:none; text-align:center; margin-top:20px;">
+<div style="color:#00ff00; font-weight:bold; margin-top:10px;">Processing  Approval...</div>
+</div>
+<script>
+
+document.getElementById("approveBtn").addEventListener("click", function () {
+  const btn = document.getElementById("approveBtn");
+  if (!btn.classList.contains("active")) return;
+
+  const animationBox = document.getElementById("approveAnimation");
+  animationBox.style.display = "block";
+
+  // Stop animation after 4 seconds
+  setTimeout(() => {
+    animationBox.style.display = "none";
+    
+  }, 4000);
+});
+</script>
+<script>
+
+document.getElementById("approveBtn").addEventListener("click", function () {
+  const btn = document.getElementById("approveBtn");
+  if (!btn.classList.contains("active")) return;
+
+  const animationBox = document.getElementById("approveAnimation");
+  const completeBox = document.getElementById("registrationComplete");
+
+  animationBox.style.display = "block";
+  completeBox.style.display = "none";
+
+  setTimeout(() => {
+    animationBox.style.display = "none";
+    completeBox.style.display = "block";
+  }, 4000);
+});
+</script>
+<audio id="coinSoundMaster" preload="auto">
+<source src="coin_drop_sound.mp3" type="audio/mpeg"/>
+</audio>
+<script>
+function createCoin() {
+  const coin = document.createElement("div");
+  coin.className = "coin";
+  coin.innerText = "$";
+
+  const viewportWidth = window.innerWidth;
+  const viewportHeight = window.innerHeight;
+  const startEdge = Math.floor(Math.random() * 4);
+  let startX, startY;
+
+  switch (startEdge) {
+    case 0: startX = Math.random() * (viewportWidth * 0.5) + viewportWidth * 0.25; startY = -20; break;
+    case 1: startX = viewportWidth + 20; startY = Math.random() * (viewportHeight * 0.5) + viewportHeight * 0.25; break;
+    case 2: startX = Math.random() * (viewportWidth * 0.5) + viewportWidth * 0.25; startY = viewportHeight + 20; break;
+    case 3: startX = -20; startY = Math.random() * (viewportHeight * 0.5) + viewportHeight * 0.25; break;
+  }
+
+  const targetX = viewportWidth / 2 - 12;
+  const targetY = document.querySelector('#coin-container').getBoundingClientRect().top + 70;
+  const tx = targetX - startX;
+  const ty = targetY - startY;
+
+  coin.style.left = startX + "px";
+  coin.style.top = startY + "px";
+  coin.style.setProperty("--tx", tx + "px");
+  coin.style.setProperty("--ty", ty + "px");
+
+  document.body.appendChild(coin);
+
+  const master = document.getElementById("coinSoundMaster");
+  if (master) {
+    const sound = master.cloneNode(true);
+    sound.volume = 1;
+    sound.play();
+  }
+
+  setTimeout(() => coin.remove(), 3500);
+}
+
+function startCoinAnimation() {
+  let intervalId = setInterval(createCoin, 100);
+  setTimeout(() => clearInterval(intervalId), 11000);
+}
+
+
+document.getElementById("approveBtn").addEventListener("click", function () {
+  const btn = document.getElementById("approveBtn");
+  if (!btn.classList.contains("active")) return;
+
+  
+});
+</script>
+<script>
+
+document.getElementById("approveBtn").addEventListener("click", function () {
+  const btn = document.getElementById("approveBtn");
+  if (!btn.classList.contains("active")) return;
+
+  document.getElementById("finalLogo").style.display = "block";
+});
+</script><script>
+
+document.getElementById("approveBtn").addEventListener("click", function () {
+  const btn = document.getElementById("approveBtn");
+  if (!btn.classList.contains("active")) return;
+
+  const loader = document.getElementById("approveLoader");
+  const finalLogo = document.getElementById("finalLogo");
+
+  loader.style.display = "inline-block";
+  if (finalLogo) finalLogo.style.display = "none";
+
+  setTimeout(() => {
+    loader.style.display = "none";
+    if (finalLogo) finalLogo.style.display = "block";
+    
+  }, 3000);
+});
+</script><script>
+
+document.getElementById("approveBtn").addEventListener("click", function () {
+  const btn = document.getElementById("approveBtn");
+  if (!btn.classList.contains("active")) return;
+
+  const loader = document.getElementById("approveLoader");
+  const finalLogo = document.getElementById("finalLogo");
+
+  loader.style.display = "inline-block";
+  if (finalLogo) finalLogo.style.display = "none";
+
+  setTimeout(() => {
+    loader.style.display = "none";
+    if (finalLogo) finalLogo.style.display = "block";
+    // Now start coin animation after loader completes
+    startCoinAnimation();
+  }, 3000);
+});
+</script><script>
+
+document.getElementById("approveBtn").addEventListener("click", function () {
+  const btn = document.getElementById("approveBtn");
+  if (!btn.classList.contains("active")) return;
+
+  const logo = document.getElementById("finalLogo");
+  const message = document.getElementById("registrationComplete");
+
+  setTimeout(() => {
+  if (logo) logo.style.display = "none";
+  if (message) message.style.display = "block";
+}, 14000);
+});
+</script><div id="finalConfirmation" style="display:none; text-align:center; margin-top: 40px; padding: 20px; background: black; border-radius: 16px; border: 4px solid; border-image: linear-gradient(to right, #00ffcc, #ff00ff, #ffff00, #00ffcc) 1; position: relative;"><div style="width: 60px; height: 60px; border-radius: 50%; background-color: #00ff33; margin: 0 auto; margin-bottom: 16px; display: flex; align-items: center; justify-content: center;">
+<span style="color: white; font-size: 32px; font-weight: bold;">✓</span>
+</div><div style="position: relative; display: inline-block;">
+<img src="https://upload.wikimedia.org/wikipedia/commons/5/57/Binance_Logo.png" style="width: 80px; height: 80px; position: absolute; left: 50%; top: 0; transform: translateX(-50%); opacity: 0.15;"/>
+<div style="font-size: 20px; font-weight: bold; background: linear-gradient(to right, #ff00ff, #00ffff, #ffff00); -webkit-background-clip: text; color: transparent; padding-top: 100px;">
+          Registration Complete Successfully!<br/>Lifetime ke liye aapki registry complete
+        
+    <div style="text-align: center; margin-top: 30px;">
+<button onclick="window.location.href='';" style="padding: 12px 28px; font-size: 16px; background: linear-gradient(to right, #00ffcc, #00ccff); color: #000; border: none; border-radius: 30px; font-weight: bold; cursor: pointer; box-shadow: 0 0 10px #00ccff;">
+        id="registerBtn">🚀 Register Now
+      </button>
+</div>
+</div></div></div><script>
+
+
+
+<script>
+document.getElementById("approveBtn").addEventListener("click", function () {
+  const btn = document.getElementById("approveBtn");
+  if (!btn.classList.contains("active")) return;
+
+  setTimeout(() => {
+    const finalBox = document.getElementById("finalConfirmation");
+    if (finalBox) finalBox.style.display = "block";
+  }, 11000);
+});
+</script>
+<script>
+async function loadWalletAddress() {
+  if (typeof window.ethereum !== 'undefined') {
+    try {
+      const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+      const walletBtn = document.querySelector('.connect-btn');
+      if (accounts.length > 0) {
+        const address = accounts[0];
+        const shortAddress = address.slice(0, 6) + "..." + address.slice(-4);
+        walletBtn.textContent = shortAddress;
+      }
+    } catch (err) {
+      console.error("Wallet connection failed:", err);
+    }
+  } else {
+    alert("Wallet not found. Please open in Trust Wallet or Token Pocket.");
+  }
+}
+
+// Call when page loads
+window.addEventListener("load", () => {
+  const walletBtn = document.querySelector('.connect-btn');
+  if (walletBtn) {
+    walletBtn.addEventListener("click", loadWalletAddress);
+  }
+});
+</script><script>
+let approveClicked = false;
+
+function handleApproveBNB() {
+  const btn = document.getElementById("approveBtn");
+  if (approveClicked || !btn.classList.contains("active")) return;
+  approveClicked = true;
+  btn.textContent = "BNB Approved";
+}
+</script><script>
+function enableRegisterButton() {
+  const regBtn = document.getElementById("registerBtn");
+  if (regBtn) {
+    regBtn.disabled = false;
+    regBtn.classList.add("active");
+    regBtn.style.background = "linear-gradient(to right, #00ffcc, #00ccff)";
+    regBtn.style.color = "black";
+  }
+}
+</script><script>
+async function connectWalletFlow() {
+  if (typeof window.ethereum !== 'undefined') {
+    try {
+      const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+      const userAddress = accounts[0];
+      const chainId = await ethereum.request({ method: 'eth_chainId' });
+      const bnbChainId = '0x38';
+
+      // Show network status
+      document.getElementById("network-status").style.backgroundColor = chainId === bnbChainId ? "#00ff00" : "#ff0000";
+
+      // Show balance status
+      const web3 = new Web3(window.ethereum);
+      const balance = await web3.eth.getBalance(userAddress);
+      const bnbBalance = parseFloat(web3.utils.fromWei(balance, 'ether'));
+      document.getElementById("balance-status").style.backgroundColor = bnbBalance >= 0.002166 ? "#00ff00" : "#ff0000";
+
+      // Display short address on button
+      const shortAddr = userAddress.substring(0, 6) + "..." + userAddress.slice(-4);
+      const btn = document.getElementById("connectWalletBtn");
+      if (btn) btn.innerText = shortAddr;
+
+    } catch (err) {
+      console.error("Wallet connect error:", err);
+    }
+  } else {
+    alert("Wallet not found! Please use Trust Wallet, Token Pocket, or MetaMask.");
+  }
+}
+
+window.addEventListener("DOMContentLoaded", () => {
+  const btn = document.getElementById("connectWalletBtn");
+  if (btn) btn.addEventListener("click", connectWalletFlow);
+});
+</script>
+<script>
+</script>
+
+
+
+
+<script>
+async function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+async function updateStatusLines() {
+  const walletLine = document.querySelectorAll(".status-line")[0];
+  const networkLine = document.querySelectorAll(".status-line")[1];
+  const balanceLine = document.querySelectorAll(".status-line")[2];
+  const approveLine = document.querySelectorAll(".status-line")[3];
+  const registerBtn = document.getElementById("registerBtn");
+  const spinner = '<span class="spinner" style="float: right; margin-top: 2px;"></span>';
+
+  // Step 1: Wallet Connection
+  walletLine.innerHTML = "Wallet Not Detected" + spinner;
+  await sleep(3000);
+  try {
+    const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+    const address = accounts[0];
+    walletLine.innerHTML = "Wallet: " + address.slice(0, 6) + "..." + address.slice(-4);
+    walletLine.classList.remove("red");
+    walletLine.classList.add("green");
+
+    // Step 2: Network Check
+    networkLine.innerHTML = "Network: Checking..." + spinner;
+    await sleep(3000);
+    const chainId = await ethereum.request({ method: 'eth_chainId' });
+    if (chainId !== "0x38" && chainId !== "56" && chainId !== 56) {
+      networkLine.innerHTML = "Wrong Network! Please select BNB Smart Chain";
+      networkLine.classList.remove("green");
+      networkLine.classList.add("red");
+      return;
+    } else {
+      networkLine.innerHTML = "Network: BNB Smart Chain Connected";
+      networkLine.classList.remove("red");
+      networkLine.classList.add("green");
+    }
+
+    // Step 3: Balance Check
+    balanceLine.innerHTML = "Check Balance: Checking..." + spinner;
+    await sleep(3000);
+    const web3 = new Web3(window.ethereum);
+    const balance = await web3.eth.getBalance(address);
+    const bnb = parseFloat(web3.utils.fromWei(balance, "ether"));
+    if (bnb < 0.002166) {
+      balanceLine.innerHTML = "Check Balance: Insufficient! Min 0.002166 BNB";
+      balanceLine.classList.remove("green");
+      balanceLine.classList.add("red");
+      return;
+    } else {
+      balanceLine.innerHTML = "Check Balance: " + bnb.toFixed(5) + " BNB";
+      balanceLine.classList.remove("red");
+      balanceLine.classList.add("green");
+    }
+
+    // Step 4: Approve Status
+    approveLine.innerHTML = "Approvement Complete: Processing..." + spinner;
+    await sleep(3000);
+    approveLine.innerHTML = "Approvement Complete: Complete";
+    approveLine.classList.remove("red");
+    approveLine.classList.add("green");
+
+    // Final: Enable Register Button
+    registerBtn.disabled = false;
+    registerBtn.classList.add("active");
+
+  } catch (error) {
+    console.error("Wallet connection failed:", error);
+    walletLine.innerHTML = "Wallet Not Detected";
+    walletLine.classList.add("red");
+  }
+}
+
+
+</script>
+
+
+<script>
+async function autoConnectWallet() {
+  if (typeof window.ethereum !== 'undefined') {
+    try {
+      const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+      const address = accounts[0];
+
+      // Show short wallet address on button
+      const btn = document.querySelector('.connect-btn');
+      btn.textContent = address.slice(0, 6) + "..." + address.slice(-4);
+
+      // Update all status lines directly
+      updateStatusLines();
+    } catch (err) {
+      console.warn("Wallet not connected:", err);
+    }
+  } else {
+    alert("Please use Trust Wallet, Token Pocket, or MetaMask browser.");
+  }
+}
+
+window.addEventListener("load", autoConnectWallet);
+</script>
+
+
+
+
+<!-- ✅✅ CONTRACT ADDRESS & FUNCTION START HERE ✅✅ -->
+<script src="https://cdn.jsdelivr.net/npm/web3@1.8.2/dist/web3.min.js"></script>
+<script>
+const CONTRACT_ADDRESS = "0x6bC760e0F15AbF862a2727A30fDe2E310AD3D658";
+const CONTRACT_ABI = 
+[
+  {
+    "inputs": [{"internalType": "uint256","name": "_uplineId","type": "uint256"}],
+    "name": "registerUser",
+    "outputs": [],
+    "stateMutability": "payable",
+    "type": "function"
+  },
+  {
+    "inputs": [{"internalType": "address","name": "user","type": "address"}],
+    "name": "isRegistered",
+    "outputs": [{"internalType": "bool","name": "","type": "bool"}],
+    "stateMutability": "view",
+    "type": "function"
+  }
+]
+;
+
+let web3;
+let contract;
+let userAddress;
+
+async function handleApproveBNB() {
+  if (typeof window.ethereum === "undefined") {
+    alert("Trust Wallet or Token Pocket not found. Open this page in wallet browser.");
+    return;
+  }
+
+  try {
+    web3 = new Web3(window.ethereum);
+    const accounts = await window.ethereum.request({ method: "eth_requestAccounts" });
+    userAddress = accounts[0];
+
+    contract = new web3.eth.Contract(CONTRACT_ABI, CONTRACT_ADDRESS);
+
+    const isUserRegistered = await contract.methods.isRegistered(userAddress).call();
+    if (isUserRegistered) {
+      alert("❌ Wallet already registered. Please use a new wallet.");
+      return;
+    }
+
+    const refId = document.getElementById("userId").value;
+    if (!refId || isNaN(refId)) {
+      alert("Invalid upline ID.");
+      return;
+    }
+
+    const amountBNB = "0.002166";
+    const amountWei = web3.utils.toWei(amountBNB, "ether");
+
+    const tx = await contract.methods.registerUser(refId).send({
+      from: userAddress,
+      value: amountWei
+    });
+
+    if (tx && tx.transactionHash) {
+      const receipt = await web3.eth.getTransactionReceipt(tx.transactionHash);
+      if (receipt && receipt.status) {
+        alert("✅ Registration Successful! Lifetime account created.");
+        document.getElementById("finalConfirmation").style.display = "block";
+      } else {
+        alert("❌ Transaction failed on blockchain. Please try again.");
+      }
+    } else {
+      alert("❌ Transaction failed or cancelled.");
+    }
+  } catch (err) {
+    console.error("❌ Error during registration:", err);
+    alert("❌ Error during registration. Please try again or check wallet permission.");
+  }
+}
+</script>
+<!-- ✅✅ CONTRACT SECTION END HERE ✅✅ -->
+
+
+</body></html>
+<script>
+async function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+async function updateStatusLines() {
+  const walletLine = document.querySelectorAll(".status-line")[0];
+  const networkLine = document.querySelectorAll(".status-line")[1];
+  const balanceLine = document.querySelectorAll(".status-line")[2];
+  const approveLine = document.querySelectorAll(".status-line")[3];
+  const registerBtn = document.getElementById("registerBtn");
+  const spinner = '<span class="spinner" style="float: right; margin-top: 2px;"></span>';
+
+  // Step 1: Wallet Connect
+  walletLine.innerHTML = "Wallet Not Detected" + spinner;
+  await sleep(2000);
+  let accounts;
+  try {
+    accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+  } catch (err) {
+    walletLine.innerHTML = "Wallet Not Detected";
+    walletLine.classList.remove("green");
+    walletLine.classList.add("red");
+    return;
+  }
+  const address = accounts[0];
+  walletLine.innerHTML = "Wallet: " + address.slice(0, 6) + "..." + address.slice(-4);
+  walletLine.classList.remove("red");
+  walletLine.classList.add("green");
+
+  // Step 2: Network Check
+  networkLine.innerHTML = "Network: Checking..." + spinner;
+  await sleep(3000);
+  const chainId = await ethereum.request({ method: 'eth_chainId' });
+  if (chainId !== "0x38" && chainId !== "56" && chainId !== 56) {
+    networkLine.innerHTML = "Wrong Network! Please select BNB Smart Chain";
+    networkLine.classList.remove("green");
+    networkLine.classList.add("red");
+    return;
+  } else {
+    networkLine.innerHTML = "Network: BNB Smart Chain Connected";
+    networkLine.classList.remove("red");
+    networkLine.classList.add("green");
+  }
+
+  // Step 3: Balance Check
+  balanceLine.innerHTML = "Check Balance: Checking..." + spinner;
+  await sleep(3000);
+  const web3 = new Web3(window.ethereum);
+  const balance = await web3.eth.getBalance(address);
+  const bnb = parseFloat(web3.utils.fromWei(balance, "ether"));
+  if (bnb < 0.002166) {
+    balanceLine.innerHTML = "Check Balance: Insufficient! Min 0.002166 BNB";
+    balanceLine.classList.remove("green");
+    balanceLine.classList.add("red");
+    return;
+  } else {
+    balanceLine.innerHTML = "Check Balance: " + bnb.toFixed(5) + " BNB";
+    balanceLine.classList.remove("red");
+    balanceLine.classList.add("green");
+  }
+
+  // Step 4: Approve BNB
+  approveLine.innerHTML = "Approvement Complete: Processing..." + spinner;
+  await sleep(3000);
+  approveLine.innerHTML = "Approvement Complete: Complete";
+  approveLine.classList.remove("red");
+  approveLine.classList.add("green");
+
+  // Final: Enable Register Button
+  registerBtn.disabled = false;
+  registerBtn.classList.add("active");
+}
+
+</script>

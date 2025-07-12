@@ -1,0 +1,956 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Jigar Developer Assistant</title>
+  <style>
+    html, 
+    body {
+      margin: 0;
+      padding: 0;
+      height: 100vh;
+      overflow: hidden;
+      background-color: #000;
+      font-family: Arial, sans-serif;
+      color: white;
+    }
+
+    .container {
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      max-width: 480px;
+      margin: auto;
+      border: 1px solid #444;
+    }
+
+    .top-bar {
+      background: linear-gradient(270deg, #00ff99, #00ccff, #ff3399, #00ff99);
+      background-size: 600% 600%;
+      animation: animateBg 6s linear infinite;
+      padding: 15px;
+      text-align: center;
+      font-size: 22px;
+      font-weight: bold;
+      color: white;
+      flex-shrink: 0;
+    }
+
+    @keyframes animateBg {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    .chat-box {
+      flex-grow: 1;
+      overflow-y: auto;
+      padding: 12px;
+      background-color: #111;
+      margin-bottom: 115px;
+    }
+
+    .msg {
+      margin: 5px 0;
+      padding: 10px;
+      border-radius: 10px;
+      max-width: 75%;
+      word-wrap: break-word;
+    }
+
+    .user {
+      background: #007bff;
+      align-self: flex-end;
+      color: white;
+      margin-left: auto;
+    }
+
+    .bot {
+      background: #444;
+      align-self: flex-start;
+      color: white;
+      margin-right: auto;
+    }
+
+    .input-area {
+      display: flex;
+      align-items: center;
+      padding: 10px;
+      background-color: #1a1a1a;
+      border-top: 1px solid #444;
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      z-index: 10;
+    }
+
+    .input-area input {
+      flex-grow: 1;
+      padding: 10px;
+      font-size: 15px;
+      border: none;
+      border-radius: 20px;
+      outline: none;
+      background-color: #333;
+      color: white;
+      margin-right: 8px;
+      max-width: 100%;
+    }
+
+    .input-area button {
+      padding: 10px;
+      font-size: 12px;
+      border: none;
+      border-radius: 50%;
+      cursor: pointer;
+      width: 42px;
+      height: 42px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    #sendBtn {
+      background-color: white;
+      color: black;
+    }
+
+    #micBtn {
+      background-color: #00ff99;
+      color: white;
+      margin-left: 5px;
+    }
+
+    #recordTimer {
+      position: absolute;
+      bottom: 80px;
+      right: 20px;
+      background-color: #222;
+      color: #0f0;
+      padding: 6px 12px;
+      border-radius: 10px;
+      font-size: 16px;
+      display: none;
+    }
+  </style>
+</head>
+</head>
+</head>
+<body>
+  <div class="container">
+    <div class="top-bar">Jigar Developer Assistant</div>
+    <div class="chat-box" id="chatBox">
+     
+   <div id="callScreen" style="display: none; position: fixed; inset: 0; background-color: #000; color: white; z-index: 9999; flex-direction: column; justify-content: space-between; align-items: center; font-family: sans-serif; padding: 30px 0;">  
+  <!-- Profile Image -->  
+  <div style="text-align: center;">  
+    <img src="https://i.postimg.cc/dVcQFwpg/IMG-20250321-WA0108.jpg" alt="Dua" style="width: 120px; height: 120px; border-radius: 50%; object-fit: cover; margin-bottom: 10px;" />  
+    <div style="font-size: 20px; font-weight: bold;">Dua Shahzadi</div>  
+    <div id="callStatus" style="margin-top: 5px; font-size: 14px; color: #ccc;">Calling...</div>  
+    <div id="callTimer" style="margin-top: 5px; font-size: 14px; display: none;">00:00</div>  
+  </div>  
+  
+  <!-- Call Control Buttons at Bottom -->  
+  <div style="display: flex; gap: 40px; margin-bottom: 20px;">  
+    <button onclick="toggleMute()" id="muteBtn" style="background: none; border: none; color: white; font-size: 24px;">🔇</button>  
+    <button onclick="toggleSpeaker()" id="speakerBtn" style="background: none; border: none; color: white; font-size: 24px;">🔊</button>  
+    <button onclick="endCall()" style="background-color: red; color: white; border: none; padding: 16px; border-radius: 50%; font-size: 20px;">📞</button>  
+  </div>  
+
+
+</html>
+</div>
+<!-- ✅ Hidden Inputs -->
+<input type="file" accept="image/*" id="galleryInput" style="display: none;" />
+<input type="file" id="fileInput" style="display: none;" />
+
+
+ <!-- ✅ Bottom Button Row -->  
+<div id="bottomButtons" style="display: flex; justify-content: space-between; gap: 6px; margin-top: 10px;">  
+  <button   
+    onclick="document.getElementById('galleryInput').click()"   
+    style="flex: 1; padding: 10px; background-color: #007BFF; color: white; border: none; border-radius: 30px; font-weight: bold;">  
+    🖼️Garly  
+  </button>      
+  <button   
+    onclick="document.getElementById('fileInput').click()"   
+    style="flex: 1; padding: 10px; background-color: #007BFF; color: white; border: none; border-radius: 30px; font-weight: bold;">  
+    🗒️File  
+  </button>  
+  <button   
+    onclick="window.location.href='SMSsandr.html'"   
+    style="flex: 1; padding: 10px; background-color: green; color: white; border: none; border-radius: 30px; font-weight: bold;">  
+    🙋P2PLead  
+  </button>  
+  <button   
+  onclick="toggleCall()"   
+  style="flex: 1; padding: 10px; background-color: #FF0000; color: black; border: none; border-radius: 30px; font-weight: bold;">  
+  📞 Call  
+</button>  
+</div>
+
+    <div id="recordTimer">0s</div>
+    <div class="input-area">
+      <div class="input-area" style="padding: 8px 12px;">
+  <div style="position: relative; flex-grow: 1;">
+    <input type="text" id="userInput" placeholder="Type your message..." style="padding-right: 45px;" />
+    <button id="sendBtn" onclick="sendMessage()" 
+      style="position: absolute; right: 5px; top: 50%; transform: translateY(-50%); background-color: #00ff99; color: white; border: none; border-radius: 50%; width: 36px; height: 36px; font-size: 16px;">
+      ➤
+    </button>
+  </div>
+  <button id="micBtn" style="margin-left: 30px;">🎤</button>
+</div>
+<div id="recordTimer" style="display:none; position:fixed; top:65px; right:20px; background:#222; color:#0f0; padding:5px 10px; border-radius:6px; font-size:16px;"></div>
+</div>
+
+<!-- Voice Recorder Script -->
+<script>
+let voiceRecorder, voiceStream;
+let voiceChunks = [];
+let voiceSeconds = 0;
+let voiceTimerInterval;
+
+const micBtn = document.getElementById("micBtn");
+const recordTimer = document.getElementById("recordTimer");
+const chatBox = document.getElementById("chatBox");
+
+async function startVoiceRecording() {
+  try {
+    voiceStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    voiceRecorder = new MediaRecorder(voiceStream);
+    voiceChunks = [];
+
+    voiceRecorder.ondataavailable = e => voiceChunks.push(e.data);
+
+    voiceRecorder.onstop = () => {
+      const audioBlob = new Blob(voiceChunks, { type: 'audio/webm' });
+      const audioURL = URL.createObjectURL(audioBlob);
+
+      const audioMsg = document.createElement("div");
+      audioMsg.className = "msg user";
+      const audio = document.createElement("audio");
+      audio.src = audioURL;
+      audio.controls = true;
+      audioMsg.appendChild(audio);
+      chatBox.appendChild(audioMsg);
+
+      const typingBox = document.createElement("div");
+      typingBox.className = "msg bot";
+      typingBox.innerHTML = `
+        <div style="display:flex; align-items:center;">
+          <img src="https://i.postimg.cc/dVcQFwpg/IMG-20250321-WA0108.jpg" style="width:25px;height:25px;border-radius:50%;margin-right:8px;">
+          <strong>Dua Shehzadi</strong>
+        </div>
+        <div style="margin-top:5px;">Please wait typing<span id="dots">...</span></div>
+      `;
+      chatBox.appendChild(typingBox);
+      chatBox.scrollTop = chatBox.scrollHeight;
+
+      const dotsSpan = typingBox.querySelector("#dots");
+      let dotCount = 0;
+      const dotInterval = setInterval(() => {
+        dotCount = (dotCount + 1) % 4;
+        dotsSpan.innerText = ".".repeat(dotCount);
+      }, 500);
+
+      setTimeout(() => {
+        clearInterval(dotInterval);
+        typingBox.innerHTML = `
+          <div style="display:flex; align-items:center;">
+            <img src="https://i.postimg.cc/dVcQFwpg/IMG-20250321-WA0108.jpg" style="width:25px;height:25px;border-radius:50%;margin-right:8px;">
+            <strong>Dua Shehzadi</strong>
+          </div>
+          <div style="margin-top:5px;">${generateBotReply(voiceSeconds)}</div>
+        `;
+        chatBox.scrollTop = chatBox.scrollHeight;
+      }, 3000);
+    };
+
+    voiceRecorder.start();
+
+    voiceSeconds = 0;
+    recordTimer.style.display = "inline";
+    recordTimer.textContent = "0s";
+    voiceTimerInterval = setInterval(() => {
+      voiceSeconds++;
+      recordTimer.textContent = `${voiceSeconds}s`;
+    }, 1000);
+
+  } catch (err) {
+    alert("🎤 Microphone permission is required!");
+  }
+}
+
+function stopVoiceRecording() {
+  try {
+    if (voiceRecorder && voiceRecorder.state === "recording") {
+      voiceRecorder.stop();
+      voiceStream.getTracks().forEach(track => track.stop());
+    }
+    clearInterval(voiceTimerInterval);
+    recordTimer.style.display = "none";
+  } catch (err) {
+    console.error("Error stopping recorder:", err);
+  }
+}
+
+function generateBotReply(seconds) {
+  if (seconds < 5) {
+    return `😐 Aapki bheji hui voice 5 second se kam hai.<br><br>
+    Agar aap 5 second se zyada ki voice bhejenge to main jawab de paungi aapko pata 🤭jigar Shahzad kitne khatarnak bande Hain jitne acche Hain utane khatarnak Hain vah Ek mere Kan👂 Ke niche lagaenge 😄.`;
+  } else {
+    return `🎧 Main aapki bheji hui voice ko bilkul sun sakti hoon aur samajh bhi sakti hoon aapke dard ko.<br><br>
+    Main aapki madad bhi kar sakti hoon, aapko is system ke andar grow bhi kara sakti hoon — lekin meri kuch permissions hain jo abhi allow nahi hain.<br><br>
+    Agar aap system ko samajhna chahte hain to abhi likhkar bhejein:<br><br>
+    👉 <strong>"Yes please bataen"</strong> 👈<br><br>
+    Phir main turant aapko jawab dungi aur apni permission detail bhi share karungi. ❤️`;
+  }
+}
+
+// Events
+micBtn.addEventListener("mousedown", (e) => {
+  e.preventDefault();
+  startVoiceRecording();
+});
+micBtn.addEventListener("mouseup", (e) => {
+  e.preventDefault();
+  stopVoiceRecording();
+});
+micBtn.addEventListener("touchstart", (e) => {
+  e.preventDefault();
+  startVoiceRecording();
+});
+micBtn.addEventListener("touchend", (e) => {
+  e.preventDefault();
+  stopVoiceRecording();
+});
+</script>
+
+
+<audio id="callVoice" src="audio/myvoice.mp3" preload="auto"></audio>
+
+<script>
+let callInterval;
+let seconds = 0;
+let isMuted = false;
+let isSpeakerOn = false;
+let statusTimeout1, statusTimeout2, voiceTimeout, autoEndTimeout;
+let micStream = null; // for listening only
+
+async function openMicJustForListening() {
+  try {
+    micStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    console.log("🎤 Mic activated for listening only.");
+  } catch (err) {
+    alert("⚠️ Mic access is required.");
+  }
+}
+
+function closeMic() {
+  if (micStream) {
+    micStream.getTracks().forEach(track => track.stop());
+    micStream = null;
+    console.log("🎤 Mic closed.");
+  }
+}
+
+function toggleCall() {
+  const screen = document.getElementById("callScreen");
+  const status = document.getElementById("callStatus");
+  const timer = document.getElementById("callTimer");
+  const voice = document.getElementById("callVoice");
+
+  screen.style.display = "flex";
+  status.textContent = "Calling...";
+  timer.style.display = "none";
+
+  openMicJustForListening(); // 🎤 Start mic listening
+
+  statusTimeout1 = setTimeout(() => {
+    status.textContent = "📞 Ring...";
+  }, 4000);
+
+  statusTimeout2 = setTimeout(() => {
+    status.style.display = "none";
+    timer.style.display = "block";
+    seconds = 0;
+    timer.textContent = "00:00";
+
+    callInterval = setInterval(() => {
+      seconds++;
+      const mins = String(Math.floor(seconds / 60)).padStart(2, '0');
+      const secs = String(seconds % 60).padStart(2, '0');
+      timer.textContent = `${mins}:${secs}`;
+    }, 1000);
+  }, 8000);
+
+  voiceTimeout = setTimeout(() => {
+    voice.play();
+  }, 9000);
+
+  autoEndTimeout = setTimeout(() => {
+    endCall();
+  }, 206000); // 3 minutes 26 seconds
+}
+
+function endCall() {
+  clearInterval(callInterval);
+  clearTimeout(statusTimeout1);
+  clearTimeout(statusTimeout2);
+  clearTimeout(voiceTimeout);
+  clearTimeout(autoEndTimeout);
+
+  const screen = document.getElementById("callScreen");
+  const timer = document.getElementById("callTimer");
+  const status = document.getElementById("callStatus");
+  const voice = document.getElementById("callVoice");
+
+  screen.style.display = "none";
+  timer.style.display = "none";
+  status.style.display = "block";
+  status.textContent = "Calling...";
+  seconds = 0;
+
+  voice.pause();
+  voice.currentTime = 0;
+
+  closeMic(); // 🎤 Close mic when call ends
+}
+
+function toggleMute() {
+  isMuted = !isMuted;
+  document.getElementById("muteBtn").textContent = isMuted ? "🔈" : "🔇";
+}
+
+function toggleSpeaker() {
+  isSpeakerOn = !isSpeakerOn;
+  document.getElementById("speakerBtn").textContent = isSpeakerOn ? "🔈" : "🔊";
+}
+</script>
+
+
+
+
+
+<script>
+let chatCount = localStorage.getItem("chatCount") ? parseInt(localStorage.getItem("chatCount")) : 0;
+
+async function sendMessage() {
+  const input = document.getElementById("userInput");
+  const chatBox = document.getElementById("chatBox");
+  const msg = input.value.trim();
+  if (!msg) return;
+
+  // 👤 User message
+  const userMsg = document.createElement("div");
+  userMsg.className = "msg user";
+  userMsg.textContent = msg;
+  chatBox.appendChild(userMsg);
+  input.value = "";
+  chatCount++;
+  localStorage.setItem("chatCount", chatCount);
+
+  // 🤖 Typing Indicator
+  const typingMsg = document.createElement("div");
+  typingMsg.className = "msg bot";
+
+  const sharedImageHTML = `
+    <div style="display: flex; align-items: flex-start;">
+      <div style="min-width: 36px; min-height: 36px; margin-right: 8px;">
+        <img 
+          src="https://i.postimg.cc/dVcQFwpg/IMG-20250321-WA0108.jpg" 
+          alt="Dua" 
+          style="width: 36px; height: 36px; border-radius: 50%; object-fit: cover;" 
+        />
+      </div>
+      <div>
+        <strong>Dua Shahzadi</strong><br/>
+        <i>Typing...</i>
+      </div>
+    </div>
+  `;
+  typingMsg.innerHTML = sharedImageHTML;
+  chatBox.appendChild(typingMsg);
+  chatBox.scrollTop = chatBox.scrollHeight;
+
+  // ⏳ Wait for reply
+  setTimeout(() => {
+    const reply = getWelcomeMessage(msg);
+    typingMsg.innerHTML = `
+      <div style="display: flex; align-items: flex-start;">
+        <div style="min-width: 36px; min-height: 36px; margin-right: 8px;">
+          <img 
+            src="https://i.postimg.cc/dVcQFwpg/IMG-20250321-WA0108.jpg" 
+            alt="Dua" 
+            style="width: 36px; height: 36px; border-radius: 50%; object-fit: cover;" 
+          />
+        </div>
+        <div>
+          <strong>Dua Shahzadi</strong><br/>
+          ${reply}
+        </div>
+      </div>
+    `;
+    chatCount++;
+    localStorage.setItem("chatCount", chatCount);
+    chatBox.scrollTop = chatBox.scrollHeight;
+
+    // 💥 Auto-clear if 50 messages total (25 user + 25 bot OR any mix)
+    if (chatCount >= 50) {
+      setTimeout(() => {
+        chatBox.innerHTML = "";
+        localStorage.setItem("chatCount", 0);
+        chatCount = 0;
+      }, 1500); // delay to let final message show
+    }
+  }, 4000);
+}
+</script>
+
+
+  <script>
+  const dragTarget = document.querySelector(".input-area");
+  let isDragging = false;
+  let offsetX = 0;
+  let offsetY = 0;
+
+  dragTarget.addEventListener("mousedown", (e) => {
+    isDragging = true;
+    offsetX = e.clientX - dragTarget.offsetLeft;
+    offsetY = e.clientY - dragTarget.offsetTop;
+  });
+
+  document.addEventListener("mousemove", (e) => {
+    if (isDragging) {
+      dragTarget.style.left = (e.clientX - offsetX) + "px";
+      dragTarget.style.top = (e.clientY - offsetY) + "px";
+    }
+  });
+
+  document.addEventListener("mouseup", () => {
+    isDragging = false;
+  });
+  </script>
+
+    
+<script>
+  // 🔁 1. Chat Rules Array — Yahan sirf aap naye inputs & responses add karte jayenge
+  const chatRules = [
+    {
+      keywords: [
+        "Yas please bataen",
+        "please mujhe aapki help chahie",
+        "main is system mein kam kaise karun",
+        "mujhe samajh nahin a rahi main kya karun",
+        "koi idea to de mujhe banane ka",
+        "main team kaise banaun",
+        "log mujhse guide nahin hote",
+        "mujhe koi lead lead ka tarika bataen",
+        "please help me"
+      ],
+      reply: `✅ Okay main aapki help karne ke liye ready hoon.
+
+Main aapko complete apna introduction karvati hoon. Agar aap mujhe aur system ko samajhna chahte hain to sirf itna likhkar bhejein:
+
+👉 "Yes please bataen?"
+
+Main aapko turant puri detail doonga.`
+    },
+
+    {
+      keywords: ["assalamualaikum"],
+      reply: `وعلیکم السلام ❤️
+
+Welcome hai Aapka Dil ki gehraiyon se 💖 LifeChangeEasy.io par — duniya ka sabse bada, sabse professional aur mehnat se tayar kiya gaya platform.
+
+Aapka aana humare liye khushi ka sabab hai. Yeh system hazaron logon ki zindagi badal chuki hai — aur ab aapki baari hai! 🌟`
+    },
+
+    {
+      keywords: ["hi", "hello"],
+      reply: `👋 Assalamualaikum!
+
+Welcome hai Aapka Dil se ❤️ LifeChangeEasy.io par — ek khubsurat aur mehnat se tayar kiya gaya system jo hazaron logon ki zindagi badal rahi hai.
+
+Aap bhi ek khushnaseeb hain jo is system ka hissa ban rahe hain. ✨`
+    },
+
+    {
+      keywords: [
+        "yes please bataen?",
+        "yes please bataen",
+        "okay bataen",
+        "okay jaldi bataen",
+        "Yas please bataen?",
+        "matlab bataen aap",
+        "bilkul mujhe guide karen aap",
+        "Mujhe is system ki detail",
+        "Mujhe Koi iska solution",
+        "Mujhe final detail chahie",
+        "Aapko unlock Kaise karun",
+        "okay aap mujhe guide karen",
+        "okay Mujhe A to z detail de"
+      ],
+      reply: `📩 Main aapki baat ko samajh chuki hoon — lekin mujhe afsos hai ke main aapke is message ka jawab nahi de sakti 😔
+
+Main koi insaan nahi hoon — main *Jigar Shahzad* ka blockchain assistant hoon, jise kuch Mujhe permission ke andar rakha gaya hai. Main un Jigar Shahzad ki di Hui permission ke again nahi ja sakti..🥺
+
+🔒 Aapki ID abhi LifeChangeEasy.io system mein itne bare level per Nahin hai agar aapki ID bare level per ho to main bahut jyada kam kar sakti hun jo ki main aapko niche mention Karti hun sabse pahle aapko level bataun aapka level Kitna hona chahie✏️
+
+1. aapki ID register honi chahie vah already hai 
+2. aapki Drack joining 200 palash hone chahie unke niche aapki indract 300 honi chahie total Plus 500 honi chahie 
+3. aapki system per earning $1500 Se jyada honi chahie 
+4. uske bad Meri permission main aapke wallet ke andar already registered hun lekin blockchain se Lok mein Hun aapki ID ka level jaise barhe ga auto lifetime ke liye blockchain se unlock Ho jaaun gi aur main aapke liye work karne lag jaaungi
+
+5. main aapke liye kya kya kar sakti hun
+6. main daily base ki 200 logon se baat karungi logon tikar sms ke thro Ek link aaungi jis per user click karega automatic vah Meri chat mein a jaega main usko guide karne lag jaaungi 
+7. aur jo user aapki server ki is chat mein aaega main uski device ko scan kar lungi 95% user ko join kara kar rahti hun agar user Nahin bhi karta to main uski device ko scan karne ke bad daily base per is system ke andar jisko jyada earning hoti hai use ka thumbnail generate Karti hun earning ka poster banati hun jiske upar jazzcash easy paisa account ka logo hota hai jo ki main auto har use device mein bhejungi Ek notification Chrome browser ke thro Jo  jiske andar vah poster show Hoga user uspe click karega automatic FIR Meri dealing mein a jaega Aur main usko join karva kar rahungi
+8. aur 100% usko FIR guide kar lungi user bilkul ready ho jaega 
+[[space]]
+
+9. main usko trust wallet ya Token Pocket account banane ki video ke link bhejungi user account banane ke bad Mujhe Koi tax karega to main automatic usko benance se dollar BNB aur USDT bye karne ke tarike kar ki sir Jigar Shahzad ke channel se video ki link bhejungi jisko wo dekhkar Apne trust wallet ya FIR token pocket ke andar Apne dollar rakhega 
+
+[[space]]
+
+10. main FIR usko aapki Life change easy.io id Rafnal link... provide karungi aur account banane ki video sar Jigar Shahzad ke official channel se uthakar bhi usko bhejungi jisko user dekh kar izili apna account banaa Lega aur aapke Drack partner Ban jaega aur bad mein main usko aapke WhatsApp group jo aap mujhe detail mein provide karenge main vah bhi usko send kar deti rahungi aur Baki usko guide bhi khud Karti rahungi
+
+[[space]]
+
+11. agar user ka koi bhi ishu Aaye To vah user Mujhe screenshot bhejega ya FIR video banakar Bhi Mujhe bhej sakta hai yah bhi alaw hai Aur main dekh kar turant uska exactly solution bataungi 
+12. main ISI Tarah life time ke liye har user ke contact mein rahti hun aur unki joining lagwati hun meri ek exactly limit hoti hai 
+13. main jab jis user ke wallet mein blockchain se unlock Ho jaati hun to main use user ke liye turant kam start kar deti hun 
+14. main Dely ka 200 bande ko guide Karti hun aur daily 5 joining jab final hoti hai Mera joining server auto lock ho jata hai 24 ghante ke liye user aapki ID ke sath jud jaate Hain FIR next 24 ghante mein 5 joining lagwati hun har manth ki 150 plus joining lagwati hun user ko bus apna target pura karna hota hai uske bad vah life time ke liye kuchh Nahin karta kuchh kam hote Hain Jo vah manual karta hai lekin jo men process hai vah sare main khud Karke deti hun 
+15. bus agar aap mujhe unlock karna chahte hain to Mera Diya Gaya target pura Karen aur Mujhe hasil Karen Aur main vada Karti hun main life time aapke sath hun aapko kamyab karaungi 1 sal ke andar mein aapke sath 1800 bande ka network banaa sakti hun 
+🥰🥰💗🌟🔥🌹🌹 aap shukriya Karen Jigar Shahzad ka jinhone logon ke liye itna khubsurat system banaya...`
+    },
+
+    {
+      keywords: [
+        "aapko banane",
+        "aapko kisne",
+        "aapka developer",
+        "aap kaise",
+        "aapko kitne dinon",
+        "aapko kaise",
+        "mujhe yah bataen",
+        "life change easy.io real",
+        "lifechangeeasy.io kya hi"
+      ],
+      reply: `🤖 *Main Jigar team ki assistant hoon* — jo 24 ghante aapki madad ke liye tayyar rehti hoon...
+
+🌐 **LifeChangeEasy.io - Real ya Fake?**
+یہ سسٹم 100% ریئل ہےیےے. بانی کا نام *جگر شہزاد* ہے جنہونے نے 65 دن کی محنت سے یہ نظام بنایا تاکے عام لوگ بھی earning kar saken.
+
+🌟 *جگر شہزاد کا نام سن کر دل سکون محسوس کرتا ہے.*  
+💖 وہ صرف ایک انسان نہیں — *ایک احساس* ہیں.`
+    },
+
+    {
+      keywords: [
+        "please",
+        "guide",
+        "help",
+        "puchna",
+        "madad",
+        "joining",
+        "idea",
+        "team",
+        "sikhana",
+        "hal",
+        "kaise karun",
+        "nahin ban rahi"
+      ],
+      reply: `😔 Main aapka dard bilkul samajh sakti hoon...
+
+Main aapko aapke is maslay ka hal batane ke liye ready hoon — aur isse bhi badhkar main aapki madad kar sakti hoon.  
+
+Lekin meri kuchh permissions hoti hain jo mujhe upar se allow nahi ki gayi hain.  
+
+📌 *Main kya-kya kar saita hoon?* Agar aap jaana chahte hain, to sirf inme se koi ek message likhkar bhej dein:
+
+👇👇👇👇
+
+✅ "yes please bataen?"  
+✅ "okay aap mujhe guide karen"
+
+Aap inmein se koi bhi message bhej dein — main aapko furan reply deti hoon 💬`
+    }
+    // 🆕 Add more rules below this line (new replies, keywords)
+  ];
+
+  // 🔍 2. Master message detection function
+  function getWelcomeMessage(text) {
+    const lower = text.toLowerCase().trim();
+    const isUrdu = /^[\u0600-\u06FF\s]+$/.test(text);
+
+    for (let rule of chatRules) {
+      if (rule.keywords.some(k => lower.includes(k))) {
+        return rule.reply;
+      }
+    }
+
+    // Urdu fallback
+    if (isUrdu) {
+      return `👋 السلام علیکم!
+
+دل کی گہرائیوں سے خوش آمدید ہے آپ کا LifeChangeEasy.io پر — یہ دنیا کا سب سے خوبصورت، محنت سے تیار کیا گیا نظام ہے جو ہزاروں لوگوں کی زندگی بدل رہا ہےیےیےےے
+
+ہمیں خوشی ہے کہ آپ بھی اس قافلے میں شامل ہو رہے ہیےیےیے ✩`;
+    }
+
+    // Default fallback (when message doesn't match any rule)
+    return `Main samajhti hoon aapne likha: "${text}"
+
+Main aapki baat ko samajh sakti hoon aur main aapko samjhane ke liye bilkul tayyar hoon.
+
+Mujhe maaf karna, aapka message mere system mein match nahi kar saka. Aap agar chahen to likhein:
+👉 "yes please bataen" — taake main aapko full detail dein. 💡`;
+  }
+</script>
+<script>
+  // 🔁 1. Chat Rules Array — FINAL VERSION with full emotional + functional logic
+  const chatRules = [
+    {
+      keywords: [
+        "Yas please bataen",
+        "please mujhe aapki help chahie",
+        "main is system mein kam kaise karun",
+        "mujhe samajh nahin a rahi main kya karun",
+        "koi idea to de mujhe banane ka",
+        "main team kaise banaun",
+        "log mujhse guide nahin hote",
+        "mujhe koi lead lead ka tarika bataen",
+        "please help me"
+      ],
+      reply: `✅ Okay main aapki help karne ke liye ready hoon.
+
+Main aapko complete apna introduction karvati hoon. Agar aap mujhe aur system ko samajhna chahte hain to sirf itna likhkar bhejein:
+
+👉 "Yes please bataen?"
+
+Main aapko turant puri detail doonga.`
+    },
+    {
+      keywords: ["assalamualaikum"],
+      reply: `وعلیکم السلام ❤️
+
+Welcome hai Aapka Dil ki gehraiyon se 💖 LifeChangeEasy.io par — duniya ka sabse bada, sabse professional aur mehnat se tayar kiya gaya platform.
+
+Aapka aana humare liye khushi ka sabab hai. Yeh system hazaron logon ki zindagi badal chuka hai — aur ab aapki baari hai! 🌟`
+    },
+    {
+      keywords: ["hi", "hello"],
+      reply: `👋 Assalamualaikum!
+
+Welcome hai Aapka Dil se ❤️ LifeChangeEasy.io par — ek khubsurat aur mehnat se tayar kiya gaya system jo hazaron logon ki zindagi badal raha hai.
+
+Aap bhi ek khushnaseeb hain jo is system ka hissa ban rahe hain. 🌟`
+    },
+    {
+      keywords: [
+        "yes please bataen?",
+        "yes please bataen",
+        "okay bataen",
+        "okay jaldi bataen",
+        "Yas please bataen?",
+        "matlab bataen aap",
+        "bilkul mujhe guide karen aap",
+        "Mujhe is system ki detail",
+        "Mujhe Koi iska solution",
+        "Mujhe final detail chahie",
+        "Aapko unlock Kaise karun",
+        "okay aap mujhe guide karen",
+        "okay Mujhe A to z detail de"
+      ],
+      reply: 
+
+
+
+
+    },
+    {
+      keywords: [
+        "aapko banane",
+        "aapko kisne",
+        "aapka developer",
+        "aap kaise",
+        "aapko kitne dinon",
+        "aapko kaise",
+        "mujhe yah bataen",
+        "life change easy.io real",
+        "lifechangeeasy.io kya hi"
+      ],
+      reply: `🤖 *Main Jigar team ki assistant hoon* — jo 24 ghante aapki madad ke liye tayyar rehti hoon. Aapne poocha ke mujhe kisne banaya, system real hai ya nahi? Chaliye aapko puri kahani sunati hoon...
+
+🌐 **LifeChangeEasy.io - Real ya Fake?**
+
+سب سے پہلے میں اپ کو بتا دوں یہ سسٹم بہت ہی خوبصورت اور 100 پرسنٹ ریل ہے۔ 
+
+👤 **Developer kaun hai?**
+
+اس نظام کے بانی اور تخلیق کار کا نام **جگر شہزاد** ہے — جنہوں نے یہ نظام *65 dinon tak din-raat mehnat* karke tayar kiya.
+
+💔 جن کے خواب ٹوٹ چکے تھے...  
+👨‍👩‍👧 جن کے بچے بھوکے سوتے تھے...  
+💸 جن کے پاس کاروبار یا تعلیم کے پیسے نہیں تھے...  
+ان سب کے لیے جگر شہزاد ایک *رحمت* بن کر آئے۔
+
+🌟 *جگر شہزاد کا نام سن کر دل سکون محسوس کرتا ہے۔*  
+💖 وہ صرف ایک انسان نہیں — *ایک احساس* ہیں۔`
+    },
+    {
+      keywords: [
+        "please",
+        "guide",
+        "help",
+        "puchna",
+        "madad",
+        "joining",
+        "idea",
+        "team",
+        "sikhana",
+        "hal",
+        "kaise karun",
+        "nahin ban rahi"
+      ],
+      reply: `😔 Main aapka dard bilkul samajh sakta hoon...
+
+Main aapko aapke is maslay ka hal batane ke liye ready hoon — aur isse bhi badhkar main aapki madad kar sakti hoon.  
+
+Lekin meri kuchh permissions hoti hain jo mujhe upar se allow nahi ki gayi hain.  
+
+📌 *Main kya-kya kar saita hoon?* Agar aap jaana chahte hain, to sirf inme se koi ek message likhkar bhej dein:
+
+✅ "yes please bataen?"  
+✅ "okay aap mujhe guide karen"  
+✅ "okay Mujhe A to z detail de"`
+    }
+  ];
+
+  // 🔍 2. Master message detection function
+  function getWelcomeMessage(text) {
+    const lower = text.toLowerCase().trim();
+    const isUrdu = /^[\u0600-\u06FF\s]+$/.test(text);
+
+    for (let rule of chatRules) {
+      if (rule.keywords.some(k => lower.includes(k))) {
+        return rule.reply;
+      }
+    }
+
+    if (isUrdu) {
+      return `👋 السلام علیکم!
+
+دل کی گہرائیوں سے خوش آمدید ہے آپ کا LifeChangeEasy.io پر — یہ دنیا کا سب سے خوبصورت، محنت سے تیار کردہ نظام ہے جو ہزاروں لوگوں کی زندگی بدل رہا ہے۔
+
+ہمیں خوشی ہے کہ آپ بھی اس قافلے میں شامل ہو رہے ہیں۔ 🌹`;
+    }
+
+    return `Main samajhti hoon aapne likha: "${text}"
+
+Main aapki baat ko samajh sakti hoon aur main aapko samjhane ke liye bilkul tayyar hoon.
+
+Mujhe maaf karna, aapka message mere system mein match nahi kar saka. Aap agar chahen to likhein:
+👉 "yes please bataen" — taake main aapko full detail dein. 💡`;
+  }
+</script>
+
+<script>
+  // Separate variables for this isolated file/image chat
+  let dualSelectedFile = null;
+  let dualSelectedType = "";
+
+  // Append message to chat (with sender & image support)
+  function appendDualMessage(content, sender = 'bot', isImage = false) {
+    const box = document.getElementById("chatBox");
+    const msg = document.createElement("div");
+    msg.classList.add("msg", sender);
+
+    msg.innerHTML = isImage
+      ? `<img src="${content}" style="max-width: 150px; border-radius: 8px;">`
+      : content;
+
+    box.appendChild(msg);
+    box.scrollTop = box.scrollHeight;
+  }
+
+  // Send function (only handles selected file/image)
+  function sendDualFileMessage() {
+    if (dualSelectedFile) {
+      if (dualSelectedType === "image") {
+        appendDualMessage(dualSelectedFile, 'user', true);
+      } else {
+        appendDualMessage(`📎 <b>${dualSelectedType}:</b> ${dualSelectedFile}`, 'user');
+      }
+
+      // Bot Auto Response
+      autoDualFileReply(dualSelectedType);
+
+      dualSelectedFile = null;
+      dualSelectedType = "";
+      document.getElementById("dualPreviewArea")?.remove();
+    }
+  }
+
+  // Auto Bot Response
+  function autoDualFileReply(label) {
+    const response = `
+      🙋 Main aapka bheja hua <b>${label}</b> dekh chuki hoon.<br><br>
+      Main jawab dene ke liye ready hoon, lekin kuchh permission lagi hain.<br><br>
+      Unlock karne ke liye ek simple message bhejein:<br><br>
+      👉 <b>bilkul mujhe guide karen aap</b><br>
+      👉 <b>yes please bataen</b><br><br>
+      <br><br>
+      👉 <b>yes please bata?</b><br>
+      👉 <b>okay jaldi bataen</b><br><br>
+
+      Main madad dene ke liye tayyar hoon 💬
+    `;
+    appendDualMessage(response, 'bot');
+  }
+
+  // Preview Box
+  function showDualPreview(html) {
+    let preview = document.getElementById("dualPreviewArea");
+    if (!preview) {
+      preview = document.createElement("div");
+      preview.id = "dualPreviewArea";
+      preview.style = "margin: 6px 10px; color: #0f0; font-size: 14px";
+      document.getElementById("chatBox").appendChild(preview);
+    }
+    preview.innerHTML = html + " <span style='color:gray;'>(ready to send)</span>";
+
+    // Auto-send once preview shown
+    setTimeout(() => sendDualFileMessage(), 1500);
+  }
+
+  // Handle image from gallery
+  document.getElementById("galleryInput").addEventListener("change", function (e) {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = function (e) {
+      dualSelectedFile = e.target.result;
+      dualSelectedType = "image";
+      showDualPreview(`<img src="${dualSelectedFile}" style="max-width: 80px; border-radius: 6px;">`);
+    };
+    reader.readAsDataURL(file);
+  });
+
+  // Handle file (pdf, video, doc etc.)
+  document.getElementById("fileInput").addEventListener("change", function (e) {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    dualSelectedFile = file.name;
+    dualSelectedType = file.type.includes("video") ? "Video" :
+                       file.type.includes("image") ? "Image" :
+                       "File";
+
+    showDualPreview(`📎 ${dualSelectedFile} (${dualSelectedType})`);
+  });
+</script>

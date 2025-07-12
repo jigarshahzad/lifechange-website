@@ -1,0 +1,256 @@
+<!DOCTYPE html><html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Jigar Assistant Lead Generate</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(135deg, #000000, #1e1e1e, #2d2d2d);
+      color: white;
+      padding: 20px;
+    }
+    h1 {
+      text-align: center;
+      font-size: 28px;
+      margin-bottom: 40px;
+      background: linear-gradient(to right, #00f260, #0575e6);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .section, .publish-section {
+      margin-bottom: 40px;
+      background: #111;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 0 10px rgba(255, 255, 255, 0.1);
+    }
+    label {
+      display: block;
+      margin-bottom: 10px;
+      font-weight: bold;
+    }
+    input[type="text"], textarea {
+      width: 100%;
+      padding: 12px;
+      border: none;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      font-size: 16px;
+    }
+    button {
+      background-color: #00ffab;
+      color: black;
+      padding: 12px 24px;
+      border: none;
+      font-size: 16px;
+      border-radius: 30px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+    button:hover {
+      background-color: #00e29f;
+    }
+    .result-box, .confirmation-box, .publish-section, .typing-box {
+      display: none;
+      background: #222;
+      border-radius: 8px;
+      padding: 20px;
+    }
+    .confirmation-box img, .typing-box img {
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      margin-right: 10px;
+      vertical-align: middle;
+    }
+    .ad-listing {
+      margin-top: 20px;
+      background: #333;
+      padding: 10px;
+      border-radius: 8px;
+      border-left: 4px solid orange;
+    }
+    #okButtonAfterTyping {
+      display: none;
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Jigar Assistant Lead Generate</h1>
+  <div class="section">
+    <label>Please internet Ad's view theme please choose from gallery</label>
+    <input type="file" accept="image/*" id="themeUpload" />
+    <div id="imagePreview"></div>
+  </div>
+  <div class="section">
+    <label>Please paste description:</label>
+    <textarea id="description" rows="4" placeholder="Enter your description here..."></textarea>
+  </div>
+  <div class="section">
+    <label>Life change easy.io dashboard link paste:</label>
+    <input type="text" id="userLink" placeholder="Paste your dashboard link here..." />
+    <button onclick="generateLink()">Generate</button>
+    <div id="generatedLink" class="result-box"></div>
+    <button id="copyBtn" style="display:none; margin-top:10px;" onclick="copyLink()">Copy</button>
+  </div>
+  <div class="confirmation-box" id="confirmBox">
+    <img src="https://i.postimg.cc/dVcQFwpg/IMG-20250321-WA0108.jpg" alt="Dua Shahzadi">
+    <span><strong>Dua Shahzadi:</strong></span>
+    <p>I've reviewed your dashboard and it's fully verified. Your theme and link are accepted.<br><br> If you want to preview your ad, please click OK.</p>
+    <button onclick="showAdView()">OK</button>
+  </div>
+  <div class="publish-section" id="publishSection">
+    <p><strong>To promote your ad</strong>, paste your ad link and click Publish:</p>
+    <label>Your Ad View Link:</label>
+    <input type="text" id="publishLink" placeholder="Paste your ad view link here...">
+    <button onclick="publishAd()">Publish</button>
+    <div id="adList"></div>
+  </div>
+  <div class="typing-box" id="typingBox">
+    <div style="display:flex;align-items:center;">
+      <img src="https://i.postimg.cc/dVcQFwpg/IMG-20250321-WA0108.jpg" alt="DP">
+      <strong>Dua Shahzadi</strong>
+    </div>
+    <p style="margin-top:10px" id="typingMessage">🙋 Please wait typing<span id="dots">...</span></p>
+    <button id="okButtonAfterTyping" onclick="hideTypingBox()">OK</button>
+  </div>
+  <script>
+let imageUploaded = false;
+let previewURL = "";
+let generatedAdLink = "";
+
+// Theme Upload and Preview
+document.getElementById('themeUpload').addEventListener('change', function (e) {
+  const file = e.target.files[0];
+  if (file) {
+    const reader = new FileReader();
+    reader.onload = function (event) {
+      previewURL = event.target.result;
+      imageUploaded = true;
+      document.getElementById('themeUpload').style.display = 'none';
+      document.getElementById('imagePreview').innerHTML = `<img src="${previewURL}" style="max-width:100%; border-radius:12px; margin-top:10px;" />`;
+    };
+    reader.readAsDataURL(file);
+  }
+});
+
+// Generate Button Logic
+function generateLink() {
+  const input = document.getElementById("userLink").value.trim();
+  const desc = document.getElementById("description").value.trim();
+  const linkPattern = /^https:\/\/lifechangeeasy\.netlify\.app\/register\/ref\/\d+$/;
+
+  if (!imageUploaded || desc.length < 30 || !linkPattern.test(input)) {
+    if (!imageUploaded) alert("⚠️ Please upload your theme image before generating.");
+    else if (desc.length < 30) alert("⚠️ Description should be at least 30 characters.");
+    else alert("⚠️ Only Life Change Easy referral links are accepted.");
+    return;
+  }
+
+  generatedAdLink = `https://jigarlead.io/view?adref=${encodeURIComponent(input)}`;
+  document.getElementById("confirmBox").style.display = "block";
+}
+
+// OK Button after Confirmation
+function showAdView() {
+  document.getElementById("generatedLink").innerHTML = `
+    <strong>✅ Theme Preview:</strong><br><br>
+    <img src="${previewURL}" style="max-width: 100%; border-radius: 12px; margin-bottom: 10px;" /><br>
+    <strong>Description:</strong><br>${document.getElementById("description").value}<br><br>
+    <strong>Your Referral Link:</strong><br><a href="${generatedAdLink}" target="_blank" style="color:#00ffab">${generatedAdLink}</a>
+  `;
+  document.getElementById("generatedLink").style.display = "block";
+  document.getElementById("copyBtn").style.display = "inline-block";
+  document.getElementById("confirmBox").style.display = "none";
+}
+
+// Copy Button Logic
+function copyLink() {
+  navigator.clipboard.writeText(generatedAdLink);
+  alert("Link copied to clipboard!");
+  document.getElementById("generatedLink").style.display = "none";
+  document.getElementById("copyBtn").style.display = "none";
+  document.getElementById("publishSection").style.display = "block";
+}
+
+// Publish Button Logic
+function publishAd() {
+  const publishInput = document.getElementById("publishLink").value.trim();
+  if (publishInput !== generatedAdLink) {
+    alert("⚠️ Please paste the exact link you just copied.");
+    return;
+  }
+
+  const adList = document.getElementById("adList");
+  const newAd = document.createElement("div");
+  newAd.className = "ad-listing";
+  newAd.innerHTML = `
+    <img src="${previewURL}" style="height: 40px; width: 40px; border-radius: 50%; float: left; margin-right: 10px;">
+    <strong>Ad Published:</strong><br>${document.getElementById("description").value}<br>
+    <span style="color: orange;">Pending...</span>
+  `;
+  adList.prepend(newAd);
+
+  setTimeout(() => {
+    newAd.querySelector("span").innerHTML = `
+      ❌ Rejected 
+      <button onclick="startTypingProcess()" style="margin-left:10px;padding:2px 10px;border:none;background:#00ffab;border-radius:20px;cursor:pointer;font-weight:bold;">OK</button>
+    `;
+  }, 4000);
+}
+
+// Typing Animation + Final Message
+function startTypingProcess() {
+  document.getElementById("typingBox").style.display = "block";
+  let dots = "";
+  const dotEl = document.getElementById("dots");
+  const interval = setInterval(() => {
+    dots = dots.length < 3 ? dots + "." : "";
+    dotEl.innerText = dots;
+  }, 500);
+
+  setTimeout(() => {
+    clearInterval(interval);
+    document.getElementById("typingMessage").innerText = `😞 Sorry mujhe bahut afsos hua ki aapka ad's ran Nahin ho raha jiski vajah se aapki main dealing bhi nahin kar sakti aapko main joining bhi lagva kar Nahin de sakti aapka add bhi rang nahin kar sakti kyunki\n\nAapki ID Abhi new hai us per wo target aapka abhi tak pura Nahin hua kyunki mujhe blockchain se aapke liye register to kar diya Gya hai Lekin Lok mein rakha gaya hai jaise aap ka target pura hoga aapki is ID per Jo target apne complete karna hai main aapko batati hun:\n\n👉 200 direct joining\n👉 300 indirect joining\n👉 $1500+ earning in dashboard\n\nJab aapka yeh target final hoga, main aapki Trust Wallet ke andar hi lifetime ke liye unlock ho jaungi. Main aapke liye daily 5–6 joining lagvaungi, guide karungi, video link bhejungi, screenshots check karungi, aur 1 month mein 150+ joining aapke panel se karwaungi. I’m really sorry 🥺`;
+    document.getElementById("okButtonAfterTyping").style.display = "inline-block";
+  }, 5000);
+}
+
+// Final OK Button — Full Reset
+function hideTypingBox() {
+  // Hide box
+  document.getElementById("typingBox").style.display = "none";
+  document.getElementById("okButtonAfterTyping").style.display = "none";
+
+  // Reset form inputs
+  document.getElementById("themeUpload").value = "";
+  document.getElementById("themeUpload").style.display = "block";
+  document.getElementById("imagePreview").innerHTML = "";
+
+  document.getElementById("description").value = "";
+  document.getElementById("userLink").value = "";
+  document.getElementById("publishLink").value = "";
+
+  // Reset all dynamic boxes
+  document.getElementById("generatedLink").style.display = "none";
+  document.getElementById("copyBtn").style.display = "none";
+  document.getElementById("confirmBox").style.display = "none";
+  document.getElementById("publishSection").style.display = "none";
+  document.getElementById("adList").innerHTML = "";
+  document.getElementById("typingMessage").innerHTML = `🙋 Please wait typing<span id="dots">...</span>`;
+
+  // Reset flags
+  imageUploaded = false;
+  previewURL = "";
+  generatedAdLink = "";
+}
+</script>
+</body>
+</html>
+
+
+
+

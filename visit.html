@@ -1,0 +1,626 @@
+
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Life Change Easy - Full Search + Stats + Transaction</title>
+<script src="https://cdn.jsdelivr.net/npm/web3@latest/dist/web3.min.js"></script>
+<style>
+    body { background-color: black; color: white; font-family: Arial, sans-serif; margin: 0; padding: 0; }
+    .topbar { background-color: #00FF00; padding: 15px; font-size: 28px; font-weight: bold; color: black; text-align: center; }
+    .search-section { text-align: center; margin: 30px 0; }
+    .search-section input { padding: 10px; width: 250px; font-size: 16px; border-radius: 5px; background: #111; border: 1px solid #444; color: white; }
+    .search-section button { padding: 10px 20px; margin-left: 10px; border: none; background-color: #00FF00; color: black; font-size: 16px; font-weight: bold; border-radius: 5px; cursor: pointer; }
+    .stats-container { display: flex; flex-wrap: wrap; justify-content: center; gap: 20px; margin-bottom: 30px; }
+    .stat-box { background: #1c1c1c; padding: 20px; border-radius: 10px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5); width: 250px; text-align: center; }
+    .stat-title { font-size: 18px; font-weight: bold; margin-bottom: 10px; color: white; }
+    .stat-value { font-size: 24px; font-weight: bold; color: white; }
+    .green-text { color: lime; }
+    .bottom-text { text-align: center; font-size: 18px; color: #00FF00; font-weight: bold; margin: 30px 0 20px; }
+    .transaction-box { background: #1c1c1c; border-radius: 10px; padding: 20px; max-width: 600px; margin: 0 auto; height: 400px; overflow-y: auto; box-shadow: 0 0 10px rgba(0, 255, 0, 0.5); }
+    .transaction { margin-bottom: 15px; border-bottom: 1px solid #333; padding-bottom: 10px; }
+    .transaction a { color: #00FF00; text-decoration: none; font-weight: bold; }
+    .more-button { text-align: center; margin-top: 20px; }
+    .more-button button { background-color: #00FF00; border: none; padding: 10px 20px; font-size: 16px; color: black; font-weight: bold; border-radius: 5px; cursor: pointer; }
+  
+.transaction-entry {
+    border: 2px solid;
+    border-image: linear-gradient(45deg, red, orange, yellow, green, blue, indigo, violet) 1;
+    border-top-left-radius: 12px; border-bottom-right-radius: 12px; border-top-right-radius: 0; border-bottom-left-radius: 0;
+    padding: 10px;
+    margin-bottom: 10px;
+    background-color: #fff;
+}
+</style>
+</head>
+<body>
+<div class="topbar">LIFE_CHANGE_EASY.IO</div>
+
+<div id="bookBox" style="border: 4px solid transparent; padding: 20px; background: black; border-radius: 12px; width: 80%; max-width: 600px; margin: 50px auto; font-family: 'Segoe UI', sans-serif; font-size: 18px; font-weight: bold; position: relative; animation: borderGlow 2s infinite; overflow: hidden; transition: height 0.3s ease;">
+  <div id="typewriter" style="color: #00ff00; white-space: pre-line;"></div>
+</div>
+
+<style>
+@keyframes borderGlow {
+  0% { border-color: #ff00ff; }
+  25% { border-color: #00ffff; }
+  50% { border-color: #00ff00; }
+  75% { border-color: #ff6600; }
+  100% { border-color: #ff00ff; }
+}
+</style>
+
+<script>
+const text1 = `🌟 Welcome to your Sign Up to Visit page! 🌟
+
+Here you will see all connected users of the entire system. 🌐
+Check out the users who joined in the last 24 hours.
+View the total earnings distributed so far. 💸
+Watch how the profit of the shop owner is shared among earning users! 🔥
+You will also see every newly joining user LIVE! 🚀
+
+✅ Visit now, join this beautiful system, change your life, and enjoy.
+💚 Thank you!`;
+
+const text2 = `\n\n✨ The creator of this beautiful project is **Jigar Shahzad**, who belongs to Bahawalpur and believe me, he has done a great job.
+
+🌍 He has created the world's first project of its kind — and it's so amazing that even the biggest developers in the world are stunned.
+
+🧠 Such a powerful, decentralized system that turns people from zero to hero!
+
+💎 Thank you Jigar Shahzad for this gift to the world. You are the reason thousands are transforming their lives.
+
+❤️ I love you Jigar Shahzad. This is a lifetime gratitude from all of us!`;
+
+let i = 0;
+let currentText = text1 + text2;  // Both texts combined
+
+const typeTarget = document.getElementById("typewriter");
+const bookBox = document.getElementById("bookBox");
+
+function typeWriter() {
+  if (i < currentText.length) {
+    typeTarget.innerHTML += currentText.charAt(i);
+    
+    // Auto-expand height dynamically
+    bookBox.style.height = typeTarget.scrollHeight + 40 + "px";
+    
+    i++;
+    setTimeout(typeWriter, 35); // typing speed
+  }
+}
+
+window.onload = () => {
+  bookBox.style.height = "60px";
+  typeWriter();
+};
+</script>
+<div id="searchSection" style="margin:20px 0; background-color:#1a1a1a; padding:15px; border:2px solid #0f0; border-radius:10px; display:flex; align-items:center; gap:10px;border: 3px solid transparent; border-image: linear-gradient(to right, red, orange, green, blue, indigo, violet) 1; border-radius: 10px; box-shadow: 0 0 12px rgba(255,255,255,0.4); padding: 10px;">
+<input id="searchIdInput" placeholder="Enter ID" style="flex:1; padding:10px; border:none; border-radius:5px; background-color:#333; color:white; font-size:16px;" type="text"/> <button id="goButton" onclick="searchIdInPartners()" style="background-color:#0f0; color:black; font-weight:bold; padding:10px 20px; border:none; border-radius:5px; cursor:pointer; font-size:16px; margin-left: -10px; margin-left: auto; margin-right: 0;">Go</button>
+</div>
+<div id="infoBoxes" style="margin-top: 20px; display: flex; flex-direction: column; gap: 15px;">
+
+<script>
+function searchIdInPartners() {
+  const idInput = document.getElementById("searchIdInput").value.trim();
+  if (!idInput || isNaN(idInput)) {
+    alert("Please enter a valid ID number");
+    return;
+  }
+
+  // ID number valid hai → redirect
+  window.location.href = "/ref/" + idInput;
+}
+</script>
+
+<div id="searchResult"></div>
+</div>
+<div class="stats-container"
+<!-- All Partners -->
+<div class="stat-box" style="padding: 20px; margin: 10px; border-radius: 15px;
+    border: 4px solid; border-image: linear-gradient(45deg, red, yellow, lime, cyan, blue, magenta, red) 1;
+    box-shadow: 0 0 20px red, 0 0 25px yellow, 0 0 30px lime; color: white;">
+  <div class="stat-title" style="padding: 10px; margin: 10px;">All Partners</div>
+  <div class="stat-value" id="allPartnersCount">0</div>
+</div>
+
+<!-- 24 Hours Partners -->
+<div class="stat-box" style="padding: 20px; margin: 10px; border-radius: 15px;
+    border: 4px solid; border-image: linear-gradient(45deg, red, yellow, lime, cyan, blue, magenta, red) 1;
+    box-shadow: 0 0 20px red, 0 0 25px yellow, 0 0 30px lime; color: white;">
+  <div class="stat-title" style="padding: 10px; margin: 10px;">24 Hours Partners</div>
+  <div class="stat-value" id="partners24hCount" style="color: limegreen;">0</div>
+</div>
+<!-- ✅ Web3 CDN -->
+<script src="https://cdn.jsdelivr.net/npm/web3@latest/dist/web3.min.js"></script>
+
+<!-- 2 pure system ke all partner  -->
+<script>
+  const contractAddress = "0x3B52a5A3A90a5f14Db481809844A0cC520195521";
+  const abi = [
+    {
+      "inputs": [],
+      "name": "totalUsers",
+      "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
+      "name": "users",
+      "outputs": [
+        { "internalType": "uint256", "name": "id", "type": "uint256" },
+        { "internalType": "address", "name": "wallet", "type": "address" },
+        { "internalType": "uint256", "name": "uplineId", "type": "uint256" },
+        { "internalType": "uint256", "name": "joinDate", "type": "uint256" },
+        { "internalType": "string", "name": "dp", "type": "string" },
+        { "internalType": "string", "name": "name", "type": "string" }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    }
+  ];
+
+  async function loadPartnerStats() {
+    const provider = new Web3("https://bsc-dataseed.binance.org/");
+    const contract = new provider.eth.Contract(abi, contractAddress);
+
+    try {
+      const total = await contract.methods.totalUsers().call();
+      let recent24h = 0;
+
+      const now = Math.floor(Date.now() / 1000);
+      const since = now - (24 * 60 * 60);
+
+      // ⚠️ Safe loop limit set (e.g. 200 latest users)
+      const checkLimit = Math.min(total, 200);
+
+      for (let i = total; i > total - checkLimit; i--) {
+        const user = await contract.methods.users(i).call();
+        if (parseInt(user.joinDate) >= since) {
+          recent24h++;
+        } else {
+          break; // optimize: stop if user is older than 24h
+        }
+      }
+
+      document.getElementById("allPartnersCount").innerText = total;
+      document.getElementById("partners24hCount").innerText = recent24h;
+
+    } catch (err) {
+      console.error("Failed to fetch partner data:", err);
+    }
+  }
+
+  window.addEventListener("DOMContentLoaded", loadPartnerStats);
+</script>
+
+
+<!-- Total Earning -->
+<div class="stat-box" style="padding: 20px; margin: 10px; border-radius: 15px;
+    border: 4px solid; border-image: linear-gradient(45deg, red, yellow, lime, cyan, blue, magenta, red) 1;
+    box-shadow: 0 0 20px red, 0 0 25px yellow, 0 0 30px lime; color: white;">
+  <div class="stat-title" style="padding: 10px; margin: 10px;">Total Earning</div>
+  <div class="stat-value" id="earningTotal">0</div>
+</div>
+
+<!-- 24 Hours Earning -->
+<div class="stat-box" style="padding: 20px; margin: 10px; border-radius: 15px;
+    border: 4px solid; border-image: linear-gradient(45deg, red, yellow, lime, cyan, blue, magenta, red) 1;
+    box-shadow: 0 0 20px red, 0 0 25px yellow, 0 0 30px lime; color: white;">
+  <div class="stat-title" style="padding: 10px; margin: 10px;">24 Hours Earning</div>
+  <div class="stat-value" id="earning24h" style="color: limegreen;">0</div>
+</div>
+<script type="module">
+import { ethers } from "https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.esm.min.js";
+
+const programs = [
+  {
+    name: "X1",
+    address: "0x28048AfF730268AFC8F785BBf7578B3879f54e67",
+    abi: [
+      "function getTotalX1Earnings() view returns (uint256)",
+      "function getSystem24hEarnings() view returns (tuple(uint256 timestamp, uint256 userId, uint256 amount, uint8 program)[])"
+    ],
+    totalMethod: "getTotalX1Earnings"
+  },
+  {
+    name: "X2",
+    address: "0xa76A73e62A5F39C74Ee4A9C85B6b52984B1Bfea5",
+    abi: [
+      "function getTotalX2Earnings() view returns (uint256)",
+      "function getSystem24hEarnings() view returns (tuple(uint256 timestamp, uint256 userId, uint256 amount, uint8 program)[])"
+    ],
+    totalMethod: "getTotalX2Earnings"
+  },
+  {
+    name: "X3",
+    address: "0x7018914A1bd0Ecc7523920a1D83fCe33D48Ac1D2",
+    abi: [
+      "function getTotalX3Earnings() view returns (uint256)",
+      "function getSystem24hEarnings() view returns (tuple(uint256 timestamp, uint256 userId, uint256 amount, uint8 program)[])"
+    ],
+    totalMethod: "getTotalX3Earnings"
+  },
+  {
+    name: "X4",
+    address: "0x150F5666738358254D1f133fFc194Ab0cA125DDC",
+    abi: [
+      "function getTotalX4Earnings() view returns (uint256)",
+      "function getSystem24hEarnings() view returns (tuple(uint256 timestamp, uint256 userId, uint256 amount, uint8 program)[])"
+    ],
+    totalMethod: "getTotalX4Earnings"
+  }
+];
+
+async function loadAllProgramEarnings() {
+  const provider = new ethers.providers.JsonRpcProvider("https://bsc-dataseed.binance.org/");
+  const cutoff = Math.floor(Date.now() / 1000) - (24 * 60 * 60);
+
+  let totalLifetime = ethers.BigNumber.from(0);
+  let total24h = ethers.BigNumber.from(0);
+
+  for (const prog of programs) {
+    try {
+      const contract = new ethers.Contract(prog.address, prog.abi, provider);
+
+      // ✅ Lifetime total
+      const total = await contract[prog.totalMethod]();
+      totalLifetime = totalLifetime.add(total);
+
+      // ✅ 24h total
+      const history = await contract.getSystem24hEarnings();
+      for (const txn of history) {
+        if (txn.timestamp >= cutoff) {
+          total24h = total24h.add(txn.amount);
+        }
+      }
+    } catch (err) {
+      console.warn(`❌ Error in ${prog.name}:`, err);
+    }
+  }
+
+  // Format output
+  const totalLifetimeFormatted = ethers.utils.formatUnits(totalLifetime, 18);
+  const total24hFormatted = ethers.utils.formatUnits(total24h, 18);
+
+  document.getElementById("earningTotal").innerText = `$${Number(totalLifetimeFormatted).toFixed(2)} USDT`;
+  document.getElementById("earning24h").innerText = `$${Number(total24hFormatted).toFixed(2)} USDT`;
+}
+
+// Run on page load and repeat every 60s
+loadAllProgramEarnings();
+setInterval(loadAllProgramEarnings, 60 * 1000);
+</script>
+
+<script>
+async function searchIdInPartners() {
+  const input = document.getElementById("searchIdInput").value.trim();
+  const id = parseInt(input);
+  const userList = document.getElementById("userList");
+
+  if (isNaN(id) || id <= 0) {
+    alert("Please enter a valid numeric ID.");
+    return;
+  }
+
+  const web3 = new Web3("https://bsc-dataseed.binance.org");
+
+  // ✅ NEW contract address
+  const contractAddress = "0x3B52a5A3A90a5f14Db481809844A0cC520195521";
+
+  // ✅ NEW ABI for full user system
+  const abi = [
+    {
+      "inputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
+      "name": "users",
+      "outputs": [
+        { "internalType": "uint256", "name": "id", "type": "uint256" },
+        { "internalType": "address", "name": "wallet", "type": "address" },
+        { "internalType": "uint256", "name": "uplineId", "type": "uint256" },
+        { "internalType": "uint256", "name": "joinDate", "type": "uint256" },
+        { "internalType": "string", "name": "dp", "type": "string" },
+        { "internalType": "string", "name": "name", "type": "string" }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    }
+  ];
+
+  const contract = new web3.eth.Contract(abi, contractAddress);
+
+  try {
+    const user = await contract.methods.users(id).call();
+
+    if (user.wallet === "0x0000000000000000000000000000000000000000") {
+      alert("This ID is not registered.");
+    } else {
+      window.location.href = `/ref/${id}`;
+    }
+
+  } catch (err) {
+    console.error("❌ Smart contract error:", err);
+    alert("Something went wrong. Try again.");
+  }
+}
+</script>
+
+ <style>
+/* Centered container for the heading */
+.heading-container {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+/* Professional gradient-bordered box */
+.heading-box {
+  padding: 15px 30px;
+  border: 4px solid transparent;
+  border-radius: 20px;
+  background-image: 
+    linear-gradient(#1a1a1a, #1a1a1a), 
+    linear-gradient(to right, red, orange, yellow, green, blue, indigo, violet);
+  background-origin: border-box;
+  background-clip: content-box, border-box;
+  box-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
+  max-width: 90%;
+  text-align: center;
+}
+
+/* Text inside the box */
+.heading-box span {
+  color: #00ff00; /* Green color */
+  font-size: 20px;
+  font-weight: bold;
+  font-family: 'Segoe UI', sans-serif;
+}
+</style>
+
+<!-- Professional heading in colorful bordered box -->
+<div class="heading-container">
+  <div class="heading-box">
+    <span>LifeChangeEasy.io Live Earning View Full Watch P2P Transaction Page</span>
+  </div>
+</div>
+<!-- 24‑Hour Transaction History Box -->
+<!-- 24‑Hour Transaction History Box -->
+<div id="transactionBox" style="margin-top: 30px; background-color: #1a1a1a; border: 2px solid #0f0; border-radius: 10px; padding: 20px; max-height: 450px; overflow-y: auto; border: 3px solid transparent; border-image: linear-gradient(to right, red, orange, yellow, green, skyblue, indigo, violet) 1; border-radius: 10px;">
+<h2 style="text-align: center; color: #0f0; margin-bottom: 20px;">24 Hours Live Transaction History</h2>
+<div id="transactionList" style="display: flex; flex-direction: column; gap: 15px;"></div>
+</div>
+</div>
+<script>
+const programContracts = [
+  { name: "X1", address: "0x28048AfF730268AFC8F785BBf7578B3879f54e67" },
+  { name: "X2", address: "0xa76A73e62A5F39C74Ee4A9C85B6b52984B1Bfea5" },
+  { name: "X3", address: "0x7018914A1bd0Ecc7523920a1D83fCe33D48Ac1D2" },
+  { name: "X4", address: "0x150F5666738358254D1f133fFc194Ab0cA125DDC" }
+];
+
+const earningsAbi = [{
+  "inputs": [],
+  "name": "getSystem24hEarnings",
+  "outputs": [{
+    "components": [
+      { "internalType": "uint256", "name": "timestamp", "type": "uint256" },
+      { "internalType": "uint256", "name": "userId", "type": "uint256" },
+      { "internalType": "uint256", "name": "amount", "type": "uint256" },
+      { "internalType": "uint8",    "name": "program", "type": "uint8" }
+    ],
+    "internalType": "struct TxnHistory[]",
+    "name": "",
+    "type": "tuple[]"
+  }],
+  "stateMutability": "view",
+  "type": "function"
+}];
+
+const joinContractAddress = "0x3B52a5A3A90a5f14Db481809844A0cC520195521";
+const joinAbi = [{
+  "inputs": [],
+  "name": "getRecentHistory",
+  "outputs": [
+    { "internalType": "string[]", "name": "", "type": "string[]" },
+    { "internalType": "uint256[]", "name": "", "type": "uint256[]" },
+    { "internalType": "uint256[]", "name": "", "type": "uint256[]" },
+    { "internalType": "uint256[]", "name": "", "type": "uint256[]" }
+  ],
+  "stateMutability": "view",
+  "type": "function"
+}];
+
+async function loadTransactionHistory() {
+  const web3 = new Web3("https://bsc-dataseed1.binance.org/");
+  const container = document.getElementById("transactionList");
+  container.innerHTML = "⏳ Loading...";
+
+  const history = [];
+  const now = Math.floor(Date.now() / 1000);
+  const threeDaysAgo = now - (3 * 24 * 60 * 60); // 3 din pehle ka timestamp
+
+  for (const prog of programContracts) {
+    try {
+      const contract = new web3.eth.Contract(earningsAbi, prog.address);
+      const records = await contract.methods.getSystem24hEarnings().call();
+
+      for (const tx of records) {
+        const ts = Number(tx.timestamp);
+        if (ts >= threeDaysAgo) {
+          history.push({
+            type: "earning",
+            userId: Number(tx.userId),
+            amount: (Number(tx.amount) / 1e18).toFixed(2),
+            program: tx.program,
+            timestamp: ts
+          });
+        }
+      }
+    } catch (e) {
+      console.warn("Earning error from", prog.name, e);
+    }
+  }
+
+  try {
+    const joinContract = new web3.eth.Contract(joinAbi, joinContractAddress);
+    const result = await joinContract.methods.getRecentHistory().call();
+    const userIds = result[1];
+    const timestamps = result[3];
+
+    for (let i = 0; i < userIds.length; i++) {
+      const uid = Number(userIds[i]);
+      const ts = Number(timestamps[i]);
+      if (ts >= threeDaysAgo && uid > 0) {
+        history.push({
+          type: "join",
+          userId: uid,
+          timestamp: ts
+        });
+      }
+    }
+  } catch (e) {
+    console.warn("Join history fetch failed", e);
+  }
+
+  history.sort((a, b) => b.timestamp - a.timestamp);
+  container.innerHTML = "";
+
+  if (history.length === 0) {
+    container.innerHTML = "<div style='text-align:center;'>No activity in last 3 days</div>";
+    return;
+  }
+
+  for (const item of history) {
+    const timeAgo = formatTimeAgo(now - item.timestamp);
+    const div = document.createElement("div");
+    div.style.padding = "10px";
+    div.style.borderRadius = "10px";
+    div.style.background = "linear-gradient(90deg, #222, #111)";
+    div.style.color = "white";
+    div.style.fontSize = "15px";
+    div.style.fontWeight = "500";
+
+    if (item.type === "earning") {
+      const isNonWork = item.program === 3 || item.program === 4;
+      const label = isNonWork ? `X${item.program} Non work` : `X${item.program}`;
+      div.innerHTML = `
+        🎉 <a href='/ref/${item.userId}' style='color:#00ff00;font-weight:bold;'>I'D: ${item.userId}</a>
+        <span style='color:white;'> very very 🥳 congratulation 🔥 </span>
+        <span style='color:yellow;'>${label}</span>
+        <span style='color:#00ff00;'> $${item.amount} USDT receive</span>
+        <span style='color:white;'> ⏰ </span><span style='color:orange;'>${timeAgo}</span>
+      `;
+    } else {
+      div.innerHTML = `
+        👤 <a href='/ref/${item.userId}' style='color:#00ff00;font-weight:bold;'>ID ${item.userId}</a>
+        <span style='color:white;'> new joining welcome 🙋🥳 ⏰ </span>
+        <span style='color:orange;'>${timeAgo}</span>
+      `;
+    }
+
+    container.appendChild(div);
+
+    const hr = document.createElement("hr");
+    hr.style = "border: 0; height: 2px; background: linear-gradient(to right, red, orange, yellow, green, cyan, blue, violet); margin: 10px 0; border-radius: 10px;";
+    container.appendChild(hr);
+  }
+}
+
+function formatTimeAgo(seconds) {
+  const mins = Math.floor(seconds / 60);
+  const hrs = Math.floor(mins / 60);
+  const days = Math.floor(hrs / 24);
+  if (days > 0) return `${days} day${days > 1 ? "s" : ""} ago`;
+  if (hrs > 0) return `${hrs} hour${hrs > 1 ? "s" : ""} ago`;
+  if (mins > 0) return `${mins} minute${mins > 1 ? "s" : ""} ago`;
+  return `${seconds} sec ago`;
+}
+
+loadTransactionHistory();
+</script>
+<div id="txnHistory" style="color:white; font-family:Arial, sans-serif; padding:10px; font-size:14px;"></div>
+
+<div id="transactionList" style="color:white; font-family:Arial; padding:10px;"></div>
+
+
+
+
+
+<style>
+.transaction-box {
+  max-height: 400px;
+  overflow-y: auto;
+  padding: 10px;
+  margin-bottom: 20px;
+  border-radius: 20px;
+  box-shadow: 0 0 10px #999;
+  background: #1a1a1a;
+}
+.transaction-box::-webkit-scrollbar {
+  width: 6px;
+}
+.transaction-box::-webkit-scrollbar-thumb {
+  background: linear-gradient(to bottom, #ff00cc, #3333ff);
+  border-radius: 10px;
+}
+.transaction {
+  border: 2px solid;
+  border-image: linear-gradient(45deg, red, orange, yellow, green, blue, indigo, violet) 1;
+  border-radius: 16px;
+  padding: 10px;
+  margin-bottom: 10px;
+  color: white;
+  background: #222;
+  font-family: 'Segoe UI', sans-serif;
+  font-size: 15px;
+}
+.transaction a {
+  color: #00ffae;
+  text-decoration: none;
+  font-weight: bold;
+}
+.more-button {
+  text-align: center;
+  margin-top: 10px;
+}
+.more-button button {
+  padding: 10px 20px;
+  background: linear-gradient(to right, #00c6ff, #0072ff);
+  border: none;
+  color: white;
+  border-radius: 25px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+.more-button button:hover {
+  background: linear-gradient(to right, #0072ff, #00c6ff);
+}
+.no-transactions {
+  color: red;
+  text-align: center;
+  padding: 20px;
+  font-weight: bold;
+}
+</style>
+
+
+<!-- New Social Buttons Section -->
+<div style="text-align: center; margin-top: 40px;">
+<div style="font-weight: bold; font-size: 18px; margin-bottom: 10px;">Life Change Easy Daily update WhatsApp Official Channel</div>
+<a href="https://whatsapp.com/channel/0029Vb5ksP9E50UejR2lq83q" style="text-decoration: none;" target="_blank">
+<button style="background-color: #00FF00; color: white; padding: 10px 20px; margin-bottom: 20px; font-size: 16px; font-weight: bold; border-radius: 5px; border: none;">Join WhatsApp Channel</button>
+</a>
+<div style="font-weight: bold; font-size: 18px; margin-bottom: 10px;">Life Change Easy Daily update Official YouTube Channel</div>
+<a href="https://youtube.com/@lifechangeeasydotio?si=TIzBCEgcLEXeu3IM" style="text-decoration: none;" target="_blank">
+<button style="background-color: #FF0000; color: white; padding: 10px 20px; margin-bottom: 20px; font-size: 16px; font-weight: bold; border-radius: 5px; border: none;">Subscribe YouTube Channel</button>
+</a>
+<div style="font-weight: bold; font-size: 18px; margin-bottom: 10px;">Daily Update TikTok Official Account</div>
+<a href="https://www.tiktok.com/@life.change.easy?_t=ZN-8vmX0HVpwYw&amp;_r=1" style="text-decoration: none;" target="_blank">
+<button style="background-color: #1DA1F2; color: white; padding: 10px 20px; margin-bottom: 40px; font-size: 16px; font-weight: bold; border-radius: 5px; border: none;">Follow on TikTok</button>
+</a>
+</div>
+</body>
+</html>

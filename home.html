@@ -1,0 +1,196 @@
+
+
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LifeChangeEasy.io | Login to Your Account</title>
+<script src="https://cdn.jsdelivr.net/gh/ethereum/web3.js/dist/web3.min.js"></script>
+<style>
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background-color: #000;
+}
+.top-bar {
+  background-color: #000;
+  padding: 1rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.top-bar h1 {
+  color: #00ff00;
+  font-size: 1.5rem;
+  margin: 0;
+}
+.connect-btn {
+  background-color: #007bff;
+  color: white;
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 5px;
+  font-weight: bold;
+  cursor: pointer;
+}
+.green-section {
+  background-color: #00cc00;
+  padding: 3rem 1rem;
+  text-align: center;
+  border-bottom-left-radius: 20px;
+  border-bottom-right-radius: 20px;
+}
+.green-section .user-id {
+  font-size: 0.9rem;
+  font-weight: normal;
+  color: #000;
+  margin-bottom: 1rem;
+  word-break: break-all;
+}
+.action-btn {
+  margin-top: 1rem;
+  background-color: #555;
+  color: #aaa;
+  border: 2px solid #00ff00;
+  padding: 0.8rem 2rem;
+  font-size: 1.2rem;
+  font-weight: bold;
+  border-radius: 10px;
+  cursor: not-allowed;
+  display: block;
+  width: 80%;
+  margin-left: auto;
+  margin-right: auto;
+}
+.action-btn.active {
+  background-color: #000;
+  color: #fff;
+  cursor: pointer;
+}
+.action-btn:hover.active {
+  background-color: #00ff00;
+  color: #000;
+}
+.description {
+  margin: 2rem 1rem 1rem 1rem;
+  font-size: 1rem;
+  font-weight: bold;
+  text-align: center;
+  background: linear-gradient(45deg, #ff0000, #007bff, #ff00ff);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+.bottom-space {
+  height: 300px;
+}
+</style>
+</head>
+<body>
+
+<div class="top-bar">
+  <h1>LifeChangeEasy.io</h1>
+  <button class="connect-btn" onclick="connectWallet()">Connect Wallet</button>
+</div>
+
+<div class="green-section">
+  <div id="userId" class="user-id"></div>
+  <button id="loginBtn" class="action-btn" onclick="loginAccount()" disabled>Login to your account</button>
+    <button id="ticketBtn" class="action-btn" onclick="startTicket()" disabled>your Assistant</button>
+  <div class="description">
+    Welcome to your own system. Yes, if you want to open your dashboard within your system, then click on Login to your account immediately. If you want to talk to your assistant, want to learn something, or want to assign him/her to do the work, he/she will guide you, build your team, you don't have to do any work, he/she will build your network, he/she will guide your downline, then click on the button on the assistant now, then you will find your assistant, you can talk to him/her. Thank you.
+  </div>
+</div>
+
+<div class="bottom-space">
+  <!-- Blank black space for future content -->
+</div>
+
+<script type="module">
+  import { ethers } from "https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.esm.min.js";
+
+  const CONTRACT_ADDRESS = "0x3B52a5A3A90a5f14Db481809844A0cC520195521"; // 🔁 Your Registration Contract
+  const ABI = [
+    {
+      "inputs": [{ "internalType": "address", "name": "user", "type": "address" }],
+      "name": "walletToId",
+      "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
+      "stateMutability": "view",
+      "type": "function"
+    }
+  ];
+
+  let userAddress;
+  let userId;
+  let provider, signer, contract;
+
+  window.connectWallet = async function () {
+    if (typeof window.ethereum === 'undefined') {
+      alert("MetaMask is required.");
+      return;
+    }
+
+    provider = new ethers.providers.Web3Provider(window.ethereum);
+    await provider.send("eth_requestAccounts", []);
+    signer = provider.getSigner();
+    userAddress = await signer.getAddress();
+    
+    document.querySelector('.connect-btn').textContent = userAddress.slice(0, 6) + "..." + userAddress.slice(-4);
+
+    contract = new ethers.Contract(CONTRACT_ADDRESS, ABI, provider);
+    try {
+      userId = await contract.walletToId(userAddress);
+      if (userId.toNumber() > 0) {
+        activateButtons();
+        document.getElementById('userId').textContent = "Your User ID: " + userId;
+      } else {
+        alert("Wallet not registered.");
+      }
+    } catch (err) {
+      alert("Contract error or network issue.");
+      console.error(err);
+    }
+  };
+
+  function activateButtons() {
+    const loginBtn = document.getElementById('loginBtn');
+    const ticketBtn = document.getElementById('ticketBtn');
+
+    loginBtn.disabled = false;
+    loginBtn.classList.add('active');
+    
+    ticketBtn.disabled = false;
+    ticketBtn.classList.add('active');
+  }
+
+  window.loginAccount = function () {
+    if (userId > 0) {
+      window.location.href = `/ref/${userId}`;
+    } else {
+      alert("Wallet not registered.");
+    }
+  };
+ window.startTicket = function () {
+  if (!userId || userId.toNumber() === 0) {
+    alert("Wallet not connected or not registered.");
+    return;
+  }
+
+  window.location.href = 'Jigar.html';
+};
+  window.startTicket = function () {
+    window.location.href = 'login.html';
+  };
+
+  // ✅ Auto connect if MetaMask is already authorized
+  window.addEventListener("load", async () => {
+    if (typeof window.ethereum !== 'undefined') {
+      const accounts = await window.ethereum.request({ method: 'eth_accounts' });
+      if (accounts.length > 0) {
+        connectWallet(); // Auto connect on load
+      }
+      
+    }
+  });
+</script>
+</body></html>
